@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../fungsi/user_data.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +13,40 @@ class _LoginPageState extends State<LoginPage> {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+    void login() {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    final user = userData.where(
+      (user) => user.email == email,
+    );
+
+    if (user.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email belum terdaftar.'),
+        ),
+      );
+      return;
+    }
+
+    final userDitemukan = user.first;
+
+    if (userDitemukan.password != password) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password salah.'),
+        ),
+      );
+      return;
+    }
+
+    userAktif = userDitemukan;
+
+    Navigator.pop(context);
+    Navigator.pushReplacementNamed(context, '/home');
+  }
 
   // POPUP LOGIN
   void tampilkanLogin() {
@@ -100,11 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-
-                      Navigator.pushReplacementNamed(context, '/home');
-                    },
+                    onPressed: login,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2563EB),
                       foregroundColor: Colors.white,
@@ -227,7 +258,9 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       height: 55,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/register');
+                        },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white,
                           side: const BorderSide(
