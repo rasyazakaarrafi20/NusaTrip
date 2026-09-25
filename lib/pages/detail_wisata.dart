@@ -5,6 +5,7 @@ import '../fungsi/favorite_data.dart';
 import '../fungsi/foto_wisata_data.dart';
 import '../fungsi/wisata_data.dart';
 import '../models/wisata.dart';
+import '../widgets/review_section.dart';
 
 class DetailWisata extends StatefulWidget {
   final Wisata wisata;
@@ -346,6 +347,15 @@ class _DetailWisataState extends State<DetailWisata> {
                   tipItem(
                     Icons.delete_outline,
                     'Jaga kebersihan dan lingkungan wisata.',
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  ReviewSection(
+                    idWisata: wisata.indexOf(widget.wisata) + 1,
+                    onReviewAdded: () {
+                      setState(() {});
+                    },
                   ),
 
                   const SizedBox(height: 25),
