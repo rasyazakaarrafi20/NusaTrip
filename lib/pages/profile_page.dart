@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'about_me.dart';
+import '../fungsi/user_data.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -40,9 +41,9 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 15),
 
             // Nama pengguna
-            const Text(
-              'Arrafi',
-              style: TextStyle(
+            Text(
+              userAktif?.nama ?? 'Pengguna',
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -51,9 +52,9 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 5),
 
             // Email pengguna
-            const Text(
-              'arrafi@gmail.com',
-              style: TextStyle(
+            Text(
+              userAktif?.email ?? '-',
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 15,
               ),
@@ -98,6 +99,8 @@ class ProfilePage extends StatelessWidget {
               height: 50,
               child: ElevatedButton.icon(
                 onPressed: () {
+                  userAktif = null;
+
                   Navigator.pushReplacementNamed(
                     context,
                     '/login',

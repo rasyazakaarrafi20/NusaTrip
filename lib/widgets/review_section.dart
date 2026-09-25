@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../fungsi/review_data.dart';
+import '../fungsi/user_data.dart';
 import 'review_form.dart';
 
 class ReviewSection extends StatelessWidget {
@@ -14,6 +15,15 @@ class ReviewSection extends StatelessWidget {
   });
 
   void bukaFormReview(BuildContext context) {
+    if (userAktif == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Silakan login terlebih dahulu.'),
+        ),
+      );
+      return;
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -27,7 +37,7 @@ class ReviewSection extends StatelessWidget {
         return ReviewForm(
           onSubmit: (rating, komentar) {
             tambahReview(
-              idUser: 1,
+              idUser: userAktif!.id,
               idWisata: idWisata,
               rating: rating,
               komentar: komentar,
@@ -106,6 +116,7 @@ class ReviewSection extends StatelessWidget {
         else
           Column(
             children: reviews.map((review) {
+              final user = cariUser(review.idUser);
               return Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 10),
@@ -124,10 +135,10 @@ class ReviewSection extends StatelessWidget {
                           child: Icon(Icons.person),
                         ),
                         const SizedBox(width: 10),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Pengguna',
-                            style: TextStyle(
+                            user?.nama ?? 'Pengguna',
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
