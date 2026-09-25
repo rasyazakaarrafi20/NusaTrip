@@ -60,11 +60,23 @@ flutter:
     - assets/images/fotogua.jpeg
     - assets/images/logo_nusatrip.png
     - assets/images/gunungbromo.jpg
+    - assets/images/gunungbromo2.jpg
+    - assets/images/gunungbromo3.jpg
     - assets/images/rajaampat.jpg
+    - assets/images/rajaampat2.jpg
+    - assets/images/rajaampat3.jpg
     - assets/images/labuanbajo.jpg
+    - assets/images/labuanbajo2.jpg
+    - assets/images/labuanbajo3.jpg
     - assets/images/borobudur.jpg
+    - assets/images/borobudur2.jpg
+    - assets/images/borobudur3.jpg
     - assets/images/pantaikuta.jpg
+    - assets/images/pantaikuta2.jpg
+    - assets/images/pantaikuta3.jpg
     - assets/images/gunungrinjani.jpg
+    - assets/images/gunungrinjani2.jpg
+    - assets/images/gunungrinjani3.jpg
   fonts:
     - family: Nunito
       fonts:

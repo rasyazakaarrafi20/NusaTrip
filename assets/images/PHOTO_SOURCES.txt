@@ -1,0 +1,44 @@
+﻿NUSATRIP - PHOTO SOURCES
+========================
+
+Foto tambahan menggunakan foto dari Wikimedia Commons.
+
+Simpan file ini sebagai catatan sumber/atribusi foto.
+
+========================
+
+Destinasi : Gunung Bromo
+File      : gunungbromo2.jpg
+Wikimedia : https://commons.wikimedia.org/wiki/File:A_Good_Morning_in_Bromo_2005.jpg
+
+-----------------------------
+Destinasi : Gunung Bromo
+File      : gunungbromo3.jpg
+Wikimedia : https://commons.wikimedia.org/wiki/File:Mount_Bromo_East_Java.jpg
+
+-----------------------------
+Destinasi : Raja Ampat
+File      : rajaampat3.jpg
+Wikimedia : https://commons.wikimedia.org/wiki/File:Raja_Ampat.jpg
+
+-----------------------------
+Destinasi : Labuan Bajo
+File      : labuanbajo2.jpg
+Wikimedia : https://commons.wikimedia.org/wiki/File:Labuan_Bajo.jpg
+
+-----------------------------
+Destinasi : Pantai Kuta
+File      : pantaikuta2.jpg
+Wikimedia : https://commons.wikimedia.org/wiki/File:Kuta_Beach_Bali.jpg
+
+-----------------------------
+Destinasi : Pantai Kuta
+File      : pantaikuta3.jpg
+Wikimedia : https://commons.wikimedia.org/wiki/File:Kuta_Beach.jpg
+
+-----------------------------
+Destinasi : Gunung Rinjani
+File      : gunungrinjani2.jpg
+Wikimedia : https://commons.wikimedia.org/wiki/File:Mount_Rinjani.jpg
+
+-----------------------------

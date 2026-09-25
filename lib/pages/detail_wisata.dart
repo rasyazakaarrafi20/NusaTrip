@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../fungsi/favorite_data.dart';
+import '../fungsi/foto_wisata_data.dart';
+import '../fungsi/wisata_data.dart';
 import '../models/wisata.dart';
 
 class DetailWisata extends StatefulWidget {
@@ -17,6 +19,8 @@ class DetailWisata extends StatefulWidget {
 }
 
 class _DetailWisataState extends State<DetailWisata> {
+  int fotoAktif = 0;
+
   bool get isFavorite {
     return FavoriteData.cekFavorit(widget.wisata);
   }
@@ -37,11 +41,33 @@ class _DetailWisataState extends State<DetailWisata> {
     }
   }
 
+  List<String> ambilFoto() {
+    final indexWisata = wisata.indexOf(widget.wisata);
+
+    if (indexWisata == -1) {
+      return [widget.wisata.gambar];
+    }
+
+    final idWisata = indexWisata + 1;
+
+    final daftarFoto = fotoWisata
+        .where((foto) => foto.idWisata == idWisata)
+        .map((foto) => foto.gambar)
+        .toList();
+
+    if (daftarFoto.isEmpty) {
+      return [widget.wisata.gambar];
+    }
+
+    return daftarFoto;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final daftarFoto = ambilFoto();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
-
       appBar: AppBar(
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
@@ -76,23 +102,62 @@ class _DetailWisataState extends State<DetailWisata> {
               );
             },
             icon: Icon(
-              isFavorite
-                  ? Icons.favorite
-                  : Icons.favorite_border,
+              isFavorite ? Icons.favorite : Icons.favorite_border,
             ),
           ),
         ],
       ),
-
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              widget.wisata.gambar,
-              width: double.infinity,
+            SizedBox(
               height: 300,
-              fit: BoxFit.cover,
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    itemCount: daftarFoto.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        fotoAktif = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Image.asset(
+                        daftarFoto[index],
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+
+                  if (daftarFoto.length > 1)
+                    Positioned(
+                      bottom: 15,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          daftarFoto.length,
+                          (index) {
+                            return Container(
+                              width: fotoAktif == index ? 20 : 7,
+                              height: 7,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
 
             Padding(
@@ -159,12 +224,10 @@ class _DetailWisataState extends State<DetailWisata> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color(0xFF2563EB),
+                        backgroundColor: const Color(0xFF2563EB),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
@@ -187,8 +250,7 @@ class _DetailWisataState extends State<DetailWisata> {
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Text(
                       widget.wisata.deskripsi,
@@ -240,7 +302,7 @@ class _DetailWisataState extends State<DetailWisata> {
                         child: infoCard(
                           Icons.landscape,
                           'Jenis',
-                          'Wisata Alam',
+                          widget.wisata.kategori,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -317,8 +379,7 @@ class _DetailWisataState extends State<DetailWisata> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             icon,
