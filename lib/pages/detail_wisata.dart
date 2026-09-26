@@ -6,6 +6,7 @@ import '../fungsi/foto_wisata_data.dart';
 import '../fungsi/wisata_data.dart';
 import '../models/wisata.dart';
 import '../widgets/review_section.dart';
+import '../widgets/trip_planning.dart';
 
 class DetailWisata extends StatefulWidget {
   final Wisata wisata;
@@ -26,12 +27,35 @@ class _DetailWisataState extends State<DetailWisata> {
     return FavoriteData.cekFavorit(widget.wisata);
   }
 
-  Future<void> bukaGoogleMaps() async {
-    final latitude = widget.wisata.latitude;
-    final longitude = widget.wisata.longitude;
-
+    Future<void> bukaMaps() async {
     final url = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      'https://www.google.com/maps/search/?api=1&query=${widget.wisata.latitude},${widget.wisata.longitude}',
+    );
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
+    Future<void> bukaTiket() async {
+    final url = Uri.parse(
+      'https://www.traveloka.com/id-id/flight',
+    );
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
+    Future<void> bukaPenginapan() async {
+    final url = Uri.parse(
+      'https://www.traveloka.com/id-id/hotel',
     );
 
     if (await canLaunchUrl(url)) {
@@ -216,7 +240,7 @@ class _DetailWisataState extends State<DetailWisata> {
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton.icon(
-                      onPressed: bukaGoogleMaps,
+                      onPressed: bukaMaps,
                       icon: const Icon(Icons.map),
                       label: const Text(
                         'Lihat Lokasi di Google Maps',
@@ -347,6 +371,20 @@ class _DetailWisataState extends State<DetailWisata> {
                   tipItem(
                     Icons.delete_outline,
                     'Jaga kebersihan dan lingkungan wisata.',
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  TripPlanning(
+                    onMaps: () {
+                      bukaMaps();
+                    },
+                    onTiket: () {
+                      bukaTiket();
+                    },
+                    onPenginapan: () {
+                      bukaPenginapan();
+                    },
                   ),
 
                   const SizedBox(height: 28),
