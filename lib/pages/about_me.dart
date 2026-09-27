@@ -11,7 +11,7 @@ class AboutMe extends StatelessWidget {
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
         title: const Text(
-          'About Me',
+          'About NusaTrip',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),

@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
+
 import 'about_me.dart';
+import 'account_page.dart';
+import 'favorite_page.dart';
+
 import '../fungsi/user_data.dart';
+
+import '../widgets/profile_header.dart';
+import '../widgets/profile_menu_item.dart';
+import '../widgets/profile_logout_button.dart';
+
+import '../fungsi/favorite_data.dart';
+import '../fungsi/review_data.dart';
+
+import '../widgets/profile_stats.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -8,7 +21,6 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Navbar
       appBar: AppBar(
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
@@ -20,95 +32,88 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
 
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 30),
-
-            // Foto profil
-            const CircleAvatar(
-              radius: 55,
-              backgroundColor: Color(0xFF2563EB),
-              child: Icon(
-                Icons.person,
-                size: 60,
-                color: Colors.white,
-              ),
+            ProfileHeader(
+              nama: userAktif?.nama ?? 'Pengguna',
+              email: userAktif?.email ?? '-',
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 25),
 
-            // Nama pengguna
-            Text(
-              userAktif?.nama ?? 'Pengguna',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+            ProfileStats(
+              jumlahFavorit: FavoriteData.favorit.length,
+              jumlahReview: userAktif == null
+                  ? 0
+                  : reviewData
+                      .where(
+                        (review) => review.idUser == userAktif!.id,
+                      )
+                      .length,
             ),
 
-            const SizedBox(height: 5),
+            const SizedBox(height: 25),
 
-            // Email pengguna
-            Text(
-              userAktif?.email ?? '-',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 15,
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            // Menu About Me
-            Card(
-              elevation: 2,
-              child: ListTile(
-                leading: const Icon(
-                  Icons.info_outline,
-                  color: Color(0xFF2563EB),
-                ),
-                title: const Text(
-                  'About Me',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+            ProfileMenuItem(
+              icon: Icons.favorite,
+              iconColor: Colors.red,
+              title: 'Favorit',
+              subtitle: 'Destinasi tersimpan',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FavoritePage(),
                   ),
-                ),
-                subtitle: const Text(
-                  'Tentang saya dan NusaTrip',
-                ),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AboutMe(),
-                    ),
-                  );
-                },
-              ),
+                );
+              },
             ),
 
-            const Spacer(),
+            ProfileMenuItem(
+              icon: Icons.person,
+              iconColor: const Color(0xFF2563EB),
+              title: 'Akun',
+              subtitle: 'Informasi akun',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccountPage(),
+                  ),
+                );
+              },
+            ),
 
-            // Tombol logout
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  userAktif = null;
+            ProfileMenuItem(
+              icon: Icons.info,
+              iconColor: Colors.green,
+              title: 'About NusaTrip',
+              subtitle: 'Tentang aplikasi',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutMe(),
+                  ),
+                );
+              },
+            ),
 
-                  Navigator.pushReplacementNamed(
-                    context,
-                    '/login',
-                  );
-                },
-                icon: const Icon(Icons.logout),
-                label: const Text('Logout'),
-              ),
+            const SizedBox(height: 10),
+
+            ProfileLogoutButton(
+              onTap: () {
+                userAktif = null;
+
+                Navigator.pushReplacementNamed(
+                  context,
+                  '/login',
+                );
+              },
             ),
 
             const SizedBox(height: 20),
