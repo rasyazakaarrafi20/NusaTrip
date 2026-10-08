@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'about_me.dart';
 import 'account_page.dart';
 import 'favorite_page.dart';
+import 'trip_page.dart';
 
 import '../fungsi/user_data.dart';
 
@@ -68,6 +69,21 @@ class ProfilePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const FavoritePage(),
+                  ),
+                );
+              },
+            ),
+
+            ProfileMenuItem(
+              icon: Icons.calendar_month,
+              iconColor: const Color(0xFF2563EB),
+              title: 'Rencana Perjalanan',
+              subtitle: 'Lihat dan kelola perjalanan',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TripPage(),
                   ),
                 );
               },

@@ -7,6 +7,7 @@ import '../fungsi/wisata_data.dart';
 import '../models/wisata.dart';
 import '../widgets/review_section.dart';
 import '../widgets/trip_planning.dart';
+import '../widgets/wisata_map.dart';
 
 class DetailWisata extends StatefulWidget {
   final Wisata wisata;
@@ -287,6 +288,24 @@ class _DetailWisataState extends State<DetailWisata> {
                     ),
                   ),
 
+                  const SizedBox(height: 24),
+
+                  const Text(
+                    'Lokasi Destinasi',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  WisataMap(
+                    namaWisata: widget.wisata.nama,
+                    latitude: double.parse(widget.wisata.latitude),
+                    longitude: double.parse(widget.wisata.longitude),
+                  ),
+
                   const SizedBox(height: 25),
 
                   const Text(
@@ -375,17 +394,18 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const SizedBox(height: 28),
 
-                  TripPlanning(
-                    onMaps: () {
-                      bukaMaps();
-                    },
-                    onTiket: () {
-                      bukaTiket();
-                    },
-                    onPenginapan: () {
-                      bukaPenginapan();
-                    },
-                  ),
+TripPlanning(
+  namaWisata: widget.wisata.nama,
+  onMaps: () {
+    bukaMaps();
+  },
+  onTiket: () {
+    bukaTiket();
+  },
+  onPenginapan: () {
+    bukaPenginapan();
+  },
+),
 
                   const SizedBox(height: 28),
 
