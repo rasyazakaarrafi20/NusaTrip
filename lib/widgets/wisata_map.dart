@@ -17,12 +17,13 @@ class WisataMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final apiKey = googleMapsApiKey;
    
     final lokasi = '$latitude,$longitude';
 
     final url =
         'https://www.google.com/maps/embed/v1/place'
-        '?key=$googleMapsApiKey'
+        '?key=$apiKey'
         '&q=$lokasi'
         '&center=$latitude,$longitude'
         '&zoom=12'

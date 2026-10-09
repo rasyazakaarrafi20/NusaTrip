@@ -47,5 +47,5 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# NusaTrip secret config
+# Konfigurasi rahasia lokal
 lib/config/maps_config.dart
