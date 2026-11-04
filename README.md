@@ -8,10 +8,10 @@ A new Flutter project.
 
 Berikut adalah anggota dari Kelompok 3 beserta perannya dalam proyek NusaTrip ini:
 
-| No | Nama | NIM | Instagram | Peran |
+| No | Nama | NIM | Instagram | Peran
 |:---|:---|:---|:---|:---|
 | 1 | [Nama Kamu] | [NIM Kamu] | 
-| 2 | Dea Apriani Agustin | 25051204387 | https://github.com/nagustine
+| 2 | Dea Apriani Agustin | 25051204387 | https://www.instagram.com/deeaayya/ |
 | 3 | [Nama Anggota 3] | [NIM 3] | 
 | 4 | [Nama Anggota 4] | [NIM 4] | 
 | 5 | [Nama Anggota 5] | [NIM 5] |
