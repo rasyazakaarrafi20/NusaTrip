@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; 
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutMe extends StatelessWidget {
   const AboutMe({super.key});
@@ -28,14 +28,14 @@ class AboutMe extends StatelessWidget {
       'image': '',
     },
     {
-      'name': 'Anggota 4',
-      'nim': '5566778899',
+      'name': 'Aghnia Khairi Faza Maverika',
+      'nim': '25051204404',
       'role': 'UI/UX & Frontend',
-      'instagram': 'username_ig_4',
+      'instagram': 'aniiarchivee',
       'image': '',
     },
     {
-      'name': 'Anggota 5', 
+      'name': 'Anggota 5',
       'nim': '9988776655',
       'role': 'UI/UX & Frontend',
       'instagram': 'username_ig_5',
@@ -58,7 +58,7 @@ class AboutMe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FF), 
+      backgroundColor: const Color(0xFFF5F9FF),
       appBar: AppBar(
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
@@ -78,7 +78,8 @@ class AboutMe extends StatelessWidget {
             // Laptop (3 kolom)
             padding = 32.0;
             // Lebar maksimal 1100, dibagi 3, dikurangi jarak antar kartu (16x2)
-            cardWidth = ((maxWidth > 1100 ? 1100 : maxWidth) - (padding * 2) - 32) / 3;
+            cardWidth =
+                ((maxWidth > 1100 ? 1100 : maxWidth) - (padding * 2) - 32) / 3;
           } else if (maxWidth >= 600) {
             // Tablet (2 kolom)
             padding = 24.0;
@@ -87,7 +88,7 @@ class AboutMe extends StatelessWidget {
 
           return Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1100), 
+              constraints: const BoxConstraints(maxWidth: 1100),
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(padding),
                 child: Column(
@@ -124,10 +125,7 @@ class AboutMe extends StatelessWidget {
                           const Text(
                             'Kami adalah tim developer di balik aplikasi eksplorasi wisata Indonesia.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
+                            style: TextStyle(color: Colors.grey, fontSize: 14),
                           ),
                         ],
                       ),
@@ -191,15 +189,17 @@ class AboutMe extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    
+
                     Wrap(
                       spacing: 16, // Jarak horizontal antar kartu
                       runSpacing: 16, // Jarak vertikal antar baris
-                      alignment: WrapAlignment.center, // KUNCI: Agar sisa 1 kartu ke tengah
+                      alignment: WrapAlignment
+                          .center, // KUNCI: Agar sisa 1 kartu ke tengah
                       children: teamMembers.map((member) {
                         return SizedBox(
                           width: cardWidth, // Lebar dinamis
-                          height: 275,      // KUNCI: Tinggi dikunci agar tidak overflow
+                          height:
+                              275, // KUNCI: Tinggi dikunci agar tidak overflow
                           child: _buildMemberCard(context, member),
                         );
                       }).toList(),
@@ -224,7 +224,11 @@ class AboutMe extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       padding: const EdgeInsets.all(16),
@@ -243,7 +247,11 @@ class AboutMe extends StatelessWidget {
                       height: 80,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.person, size: 45, color: Color(0xFF2563EB));
+                        return const Icon(
+                          Icons.person,
+                          size: 45,
+                          color: Color(0xFF2563EB),
+                        );
                       },
                     ),
                   )
@@ -254,7 +262,11 @@ class AboutMe extends StatelessWidget {
           // NAMA
           Text(
             member['name']!,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -276,14 +288,18 @@ class AboutMe extends StatelessWidget {
             ),
             child: Text(
               member['role']!,
-              style: const TextStyle(fontSize: 11, color: Color(0xFF2563EB), fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 11,
+                color: Color(0xFF2563EB),
+                fontWeight: FontWeight.w600,
+              ),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          
-          const Spacer(), 
+
+          const Spacer(),
 
           // TOMBOL INSTAGRAM
           SizedBox(
@@ -296,7 +312,9 @@ class AboutMe extends StatelessWidget {
                 backgroundColor: const Color(0xFF2563EB),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ),
@@ -313,7 +331,10 @@ class AboutMe extends StatelessWidget {
       backgroundColor: const Color(0xFF2563EB).withOpacity(0.1),
       side: BorderSide.none,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      labelStyle: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF2563EB)),
+      labelStyle: const TextStyle(
+        fontWeight: FontWeight.w600,
+        color: Color(0xFF2563EB),
+      ),
     );
   }
 }
