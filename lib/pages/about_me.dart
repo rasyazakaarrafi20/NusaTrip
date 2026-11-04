@@ -21,10 +21,10 @@ class AboutMe extends StatelessWidget {
       'image': '',
     },
     {
-      'name': 'Anggota tiga',
-      'nim': '1122334455',
+      'name': 'Fauzan Ramdhani Fajri',
+      'nim': '25051204400',
       'role': 'UI/UX & Frontend',
-      'instagram': 'username_ig_3',
+      'instagram': 'fau.zanrf',
       'image': '',
     },
     {
