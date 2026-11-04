@@ -4,6 +4,18 @@ link app: https://nusatrip.rasyazakaarrafi20.workers.dev/
 
 A new Flutter project.
 
+## 👥 Anggota Kelompok 3
+
+Berikut adalah anggota dari Kelompok 3 beserta perannya dalam proyek NusaTrip ini:
+
+| No | Nama | NIM | Instagram | Peran |
+|:---|:---|:---|:---|:---|
+| 1 | [Nama Kamu] | [NIM Kamu] | 
+| 2 | Dea Apriani Agustin | 25051204387 | https://github.com/nagustine
+| 3 | [Nama Anggota 3] | [NIM 3] | 
+| 4 | [Nama Anggota 4] | [NIM 4] | 
+| 5 | [Nama Anggota 5] | [NIM 5] |
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
