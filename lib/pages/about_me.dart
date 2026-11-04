@@ -35,10 +35,10 @@ class AboutMe extends StatelessWidget {
       'image': '',
     },
     {
-      'name': 'Anggota 5',
-      'nim': '9988776655',
+      'name': 'Nila Nazatul Fafa',
+      'nim': '25051204415',
       'role': 'UI/UX & Frontend',
-      'instagram': 'username_ig_5',
+      'instagram': 'nzf.nilaa__',
       'image': '',
     },
   ];
