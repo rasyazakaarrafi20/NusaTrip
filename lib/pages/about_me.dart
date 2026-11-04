@@ -7,10 +7,10 @@ class AboutMe extends StatelessWidget {
   // --- DATA ANGGOTA KELOMPOK 3 (SUDAH 5 ORANG) ---
   static const List<Map<String, String>> teamMembers = [
     {
-      'name': 'Arrafi',
-      'nim': '1234567890',
+      'name': 'Rasya Zaka Arrafi',
+      'nim': '25051204419',
       'role': 'Project Owner / Lead Developer',
-      'instagram': 'rasyazakaarraafi20',
+      'instagram': 'rrafie_20',
       'image': 'assets/images/fotogua.jpeg',
     },
     {
@@ -35,7 +35,7 @@ class AboutMe extends StatelessWidget {
       'image': '',
     },
     {
-      'name': 'Anggota 5', // Anggota Tambahan
+      'name': 'Anggota 5', 
       'nim': '9988776655',
       'role': 'UI/UX & Frontend',
       'instagram': 'username_ig_5',

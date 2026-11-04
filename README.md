@@ -10,9 +10,9 @@ Berikut adalah anggota dari Kelompok 3 beserta perannya dalam proyek NusaTrip in
 
 | No | Nama | NIM | Instagram | Peran
 |:---|:---|:---|:---|:---|
-| 1 | [Nama Kamu] | [NIM Kamu] | 
+| 1 | Rasya Zaka Arrafi | 25051204419 | https://www.instagram.com/rrafie_20/ |
 | 2 | Dea Apriani Agustin | 25051204387 | https://www.instagram.com/deeaayya/ |
-| 3 | [Fauzan Ramdhani Fajri] | [ 25051204400 ] | https://www.instagram.com/fau.zanrf/
+| 3 | Fauzan Ramdhani Fajri | [ 25051204400 ] | https://www.instagram.com/fau.zanrf/ |
 | 4 | [Nama Anggota 4] | [NIM 4] | 
 | 5 | [Nama Anggota 5] | [NIM 5] |
 
