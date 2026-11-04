@@ -21,7 +21,7 @@ class AboutMe extends StatelessWidget {
       'image': '',
     },
     {
-      'name': 'Anggota 3',
+      'name': 'Anggota tiga',
       'nim': '1122334455',
       'role': 'UI/UX & Frontend',
       'instagram': 'username_ig_3',
