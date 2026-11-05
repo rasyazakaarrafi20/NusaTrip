@@ -15,10 +15,10 @@ class AboutMe extends StatelessWidget {
     },
     {
       'name': 'Dea Apriani Agustin',
-      'nim': '0987654321',
+      'nim': '25051204387',
       'role': 'UI/UX & Frontend',
-      'instagram': 'deayyaa16',
-      'image': '',
+      'instagram': 'deeaayya',
+      'image': 'assets/images/foto_dea.jpg',
     },
     {
       'name': 'Fauzan Ramdhani Fajri',
