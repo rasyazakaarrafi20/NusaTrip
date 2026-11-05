@@ -14,7 +14,7 @@ Berikut adalah anggota dari Kelompok 3 beserta perannya dalam proyek NusaTrip in
 | 2 | Dea Apriani Agustin | 25051204387 | https://www.instagram.com/deeaayya/ |
 | 3 | Fauzan Ramdhani Fajri | 25051204400 | https://www.instagram.com/fau.zanrf/ |
 | 4 | Aghnia Khairi Faza Maverika | 25051204404 | https://www.instagram.com/aniiarchivee/ |
-| 5 | Nila Nazatul Fafa | 25051204415 |
+| 5 | Nila Nazatul Fafa | 25051204415 | https://www.instagram.com/nzf.nilaaa__/ |
 
 ## Getting Started
 
