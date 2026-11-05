@@ -32,7 +32,7 @@ class AboutMe extends StatelessWidget {
       'nim': '25051204404',
       'role': 'UI/UX & Frontend',
       'instagram': 'aniiarchivee',
-      'image': '',
+      'image': 'assets/images/foto_aghnia.jpeg',
     },
     {
       'name': 'Nila Nazatul Fafa',
