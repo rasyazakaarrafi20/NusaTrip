@@ -17,19 +17,22 @@ class WisataMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiKey = googleMapsApiKey;
-   
-    final lokasi = '$latitude,$longitude';
-
-    final url =
-        'https://www.google.com/maps/embed/v1/place'
-        '?key=$apiKey'
-        '&q=$lokasi'
-        '&center=$latitude,$longitude'
-        '&zoom=12'
-        '&maptype=roadmap'
-        '&language=id'
-        '&region=ID';
+    final apiKey = googleMapsApiKey.trim();
+    final url = apiKey.isNotEmpty
+        ? Uri.https('www.google.com', '/maps/embed/v1/place', {
+            'key': apiKey,
+            'q': '$latitude,$longitude',
+            'center': '$latitude,$longitude',
+            'zoom': '12',
+            'maptype': 'roadmap',
+            'language': 'id',
+            'region': 'ID',
+          })
+        : Uri.https('www.google.com', '/maps', {
+            'q': '$latitude,$longitude',
+            'z': '12',
+            'output': 'embed',
+          });
 
     return Container(
       width: double.infinity,
@@ -55,21 +58,15 @@ class WisataMap extends StatelessWidget {
             onElementCreated: (Object element) {
               final iframe = element as web.HTMLIFrameElement;
 
-              iframe.src = url;
+              iframe.src = url.toString();
 
               iframe.style.width = '100%';
               iframe.style.height = '100%';
               iframe.style.border = '0';
 
-              iframe.setAttribute(
-                'allowfullscreen',
-                'true',
-              );
+              iframe.setAttribute('allowfullscreen', 'true');
 
-              iframe.setAttribute(
-                'loading',
-                'lazy',
-              );
+              iframe.setAttribute('loading', 'lazy');
 
               iframe.setAttribute(
                 'referrerpolicy',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../fungsi/user_data.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,40 +11,30 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool showPassword = false;
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-    void login() {
+  void login() {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
-
-    final user = userData.where(
-      (user) => user.email == email,
-    );
+    final user = userData.where((user) => user.email == email);
 
     if (user.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email belum terdaftar.'),
-        ),
+        const SnackBar(content: Text('Email belum terdaftar.')),
       );
       return;
     }
 
     final userDitemukan = user.first;
-
     if (userDitemukan.password != password) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password salah.'),
-        ),
+        const SnackBar(content: Text('Password salah.')),
       );
       return;
     }
 
     userAktif = userDitemukan;
-
     Navigator.pop(context);
     Navigator.pushReplacementNamed(context, '/home');
   }
@@ -57,16 +48,11 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-
-              // JUDUL
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               title: const Text(
                 'Selamat Datang 👋',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
               ),
-
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -77,15 +63,14 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // EMAIL
+                  // Textfield dengan gaya warna gelap
                   TextField(
                     controller: emailController,
+                    style: const TextStyle(color: Color(0xFF0F172A)),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
+                      prefixIcon: const Icon(Icons.email_outlined, color: Colors.grey),
                       filled: true,
                       fillColor: const Color(0xFFF5F9FF),
                       border: OutlineInputBorder(
@@ -94,26 +79,19 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 15),
-
-                  // PASSWORD
                   TextField(
                     controller: passwordController,
                     obscureText: !showPassword,
+                    style: const TextStyle(color: Color(0xFF0F172A)),
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
                       suffixIcon: IconButton(
-                        onPressed: () {
-                          setDialogState(() {
-                            showPassword = !showPassword;
-                          });
-                        },
+                        onPressed: () => setDialogState(() => showPassword = !showPassword),
                         icon: Icon(
-                          showPassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                          showPassword ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
                         ),
                       ),
                       filled: true,
@@ -126,10 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-
-              // TOMBOL
               actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-
               actions: [
                 SizedBox(
                   width: double.infinity,
@@ -137,17 +112,12 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: login,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2563EB),
+                      backgroundColor: const Color(0xFF3A5EE0),
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     ),
-                    child: const Text(
-                      'MASUK',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    child: const Text('MASUK', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -170,30 +140,22 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // FOTO BACKGROUND
           SizedBox.expand(
-            child: Image.asset(
-              'assets/images/gunungbromo.jpg',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('assets/images/gunungbromo.jpg', fit: BoxFit.cover),
           ),
-
-          // OVERLAY
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.black.withOpacity(0.10),
-                  const Color(0xFF2563EB).withOpacity(0.55),
-                  const Color(0xFF0F172A).withOpacity(0.90),
+                  Colors.black.withValues(alpha: 0.10),
+                  const Color(0xFF2563EB).withValues(alpha: 0.55),
+                  const Color(0xFF0F172A).withValues(alpha: 0.90),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
             ),
           ),
-
-          // ISI HALAMAN
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -202,93 +164,77 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 50),
-
-                    // LOGO NUSATRIP
-                    Image.asset(
-                      'assets/images/logo_nusatrip.png',
-                      width: 210,
-                      height: 210,
-                      fit: BoxFit.contain,
+                    // LOGO KAPSUL PUTIH
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.asset(
+                        'assets/images/logo_nusatrip.png',
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-
-                    const SizedBox(height: 15),
-                    const SizedBox(height: 8),
-
+                    const SizedBox(height: 25),
                     // TAGLINE
                     const Text(
                       'Jelajahi Keindahan\nIndonesia Bersama Kami',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                         height: 1.5,
+                        shadows: [
+                          Shadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 2)),
+                        ],
                       ),
                     ),
-
                     const SizedBox(height: 45),
-
-                    // TOMBOL MASUK
+                    // TOMBOL MASUK BESAR
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
                         onPressed: tampilkanLogin,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2563EB),
+                          backgroundColor: const Color(0xFF3A5EE0),
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         ),
                         child: const Text(
                           'MASUK',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 15),
-
-                    // TOMBOL DAFTAR
+                    // TOMBOL DAFTAR BESAR
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/register');
-                        },
+                        onPressed: () => Navigator.pushNamed(context, '/register'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          side: const BorderSide(
-                            color: Colors.white,
-                            width: 1.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
+                          side: const BorderSide(color: Colors.white, width: 1.5),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         ),
                         child: const Text(
                           'DAFTAR',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 25),
-
-                    // FOOTER
                     const Text(
                       '© 2026 NusaTrip',
                       style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
-
                     const SizedBox(height: 20),
                   ],
                 ),

@@ -15,7 +15,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int currentIndex = 0;
 
-    Widget favoritePage = FavoritePage(
+  Widget favoritePage = FavoritePage(
     key: UniqueKey(),
     dariNavbar: true,
   );
@@ -29,6 +29,7 @@ class _MainPageState extends State<MainPage> {
     ];
 
     return Scaffold(
+      extendBody: true, // PENTING: Agar body tembus ke belakang navbar
       body: IndexedStack(
         index: currentIndex,
         children: pages,
@@ -43,7 +44,6 @@ class _MainPageState extends State<MainPage> {
                 dariNavbar: true,
               );
             }
-
             currentIndex = index;
           });
         },
