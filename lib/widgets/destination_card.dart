@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/wisata.dart';
 
 class DestinationCard extends StatelessWidget {
@@ -26,7 +25,7 @@ class DestinationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06), // Diperbarui ke withValues
               blurRadius: 14,
               offset: const Offset(0, 5),
             ),
@@ -36,149 +35,152 @@ class DestinationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Foto
-            Stack(
-              children: [
-                SizedBox(
-                  height: 125,
-                  width: double.infinity,
-                  child: Image.asset(
+            // --- FOTO (Menggunakan Expanded agar fleksibel) ---
+            Expanded(
+              flex: 5, // Porsi 5 bagian dari 9
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
                     wisata.gambar,
                     fit: BoxFit.cover,
                   ),
-                ),
-
-                // Favorite
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Material(
-                    color: Colors.white,
-                    shape: const CircleBorder(),
-                    elevation: 2,
-                    child: InkWell(
-                      onTap: onFavorite,
-                      customBorder: const CircleBorder(),
-                      child: SizedBox(
-                        width: 34,
-                        height: 34,
-                        child: Icon(
-                          isFavorite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          size: 19,
-                          color: isFavorite
-                              ? Colors.red
-                              : Colors.grey.shade700,
+                  
+                  // Overlay gradasi tipis di bawah foto agar rating lebih jelas
+                  Positioned(
+                    bottom: 0, left: 0, right: 0,
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.4),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ),
 
-                // Rating
-                Positioned(
-                  left: 10,
-                  bottom: 10,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
+                  // Tombol Favorite
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Material(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.star,
-                          size: 14,
-                          color: Colors.amber,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          wisata.rating,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0F172A),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            // Informasi wisata
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                12,
-                11,
-                12,
-                12,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    wisata.nama,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A),
-                    ),
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 14,
-                        color: Colors.grey.shade500,
-                      ),
-                      const SizedBox(width: 3),
-                      Expanded(
-                        child: Text(
-                          wisata.lokasi,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 11,
+                      shape: const CircleBorder(),
+                      elevation: 2,
+                      child: InkWell(
+                        onTap: onFavorite,
+                        customBorder: const CircleBorder(),
+                        child: SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            size: 18,
+                            color: isFavorite ? Colors.red : const Color(0xFF4B5675),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
 
-                  const SizedBox(height: 9),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEFF6FF),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: Text(
-                      wisata.kategori,
-                      style: const TextStyle(
-                        color: Color(0xFF2563EB),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
+                  // Rating
+                  Positioned(
+                    left: 8,
+                    bottom: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.star, size: 12, color: Colors.amber),
+                          const SizedBox(width: 3),
+                          Text(
+                            wisata.rating,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF111A3A), // Teks Navy
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            // --- INFORMASI WISATA (Teks) ---
+            Expanded(
+              flex: 4, // Porsi 4 bagian dari 9
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8), // Padding sedikit dikurangi
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Bagi ruang secara rata
+                  children: [
+                    // Nama Wisata
+                    Text(
+                      wisata.nama,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13, // Sedikit dikecilkan agar aman
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF111A3A), // Warna Navy Gelap
+                      ),
+                    ),
+
+                    // Lokasi
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 12,
+                          color: Color(0xFF4B5675), // Abu Navy
+                        ),
+                        const SizedBox(width: 3),
+                        Expanded(
+                          child: Text(
+                            wisata.lokasi,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF4B5675), // Abu Navy
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Kategori
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3A5EE0).withValues(alpha: 0.1), // Biru transparan
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        wisata.kategori,
+                        style: const TextStyle(
+                          color: Color(0xFF3A5EE0), // Biru Utama
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
