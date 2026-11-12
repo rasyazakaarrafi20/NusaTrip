@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '/models/wisata.dart';
+import 'wisata_image.dart';
 
 class ExploreListCard extends StatelessWidget {
   final Wisata wisata;
@@ -23,20 +25,19 @@ class ExploreListCard extends StatelessWidget {
         color: Colors.white,
         elevation: 2,
         margin: const EdgeInsets.only(bottom: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  wisata.gambar,
+                child: WisataImage(
+                  sumber: wisata.gambar,
+                  namaWisata: wisata.nama,
+                  fallbackAsset: wisata.gambarFallbackLokal,
                   width: 90,
                   height: 90,
-                  fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(width: 12),
@@ -78,11 +79,7 @@ class ExploreListCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          size: 16,
-                          color: Colors.amber,
-                        ),
+                        const Icon(Icons.star, size: 16, color: Colors.amber),
                         const SizedBox(width: 4),
                         Text(
                           wisata.rating,
@@ -99,9 +96,7 @@ class ExploreListCard extends StatelessWidget {
               IconButton(
                 onPressed: onFavorite,
                 icon: Icon(
-                  isFavorite
-                      ? Icons.favorite
-                      : Icons.favorite_border,
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: isFavorite ? Colors.red : Colors.grey,
                 ),
               ),

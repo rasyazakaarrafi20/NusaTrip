@@ -8,14 +8,12 @@ import '../models/wisata.dart';
 import '../widgets/review_section.dart';
 import '../widgets/trip_planning.dart';
 import '../widgets/wisata_map.dart';
+import '../widgets/wisata_image.dart';
 
 class DetailWisata extends StatefulWidget {
   final Wisata wisata;
 
-  const DetailWisata({
-    super.key,
-    required this.wisata,
-  });
+  const DetailWisata({super.key, required this.wisata});
 
   @override
   State<DetailWisata> createState() => _DetailWisataState();
@@ -24,50 +22,60 @@ class DetailWisata extends StatefulWidget {
 class _DetailWisataState extends State<DetailWisata> {
   int fotoAktif = 0;
 
+  Widget bangunFoto(String sumber) {
+    return WisataImage(
+      sumber: sumber,
+      namaWisata: widget.wisata.nama,
+      fallbackAsset: widget.wisata.gambarFallbackLokal,
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.cover,
+    );
+  }
+
   bool get isFavorite {
     return FavoriteData.cekFavorit(widget.wisata);
   }
 
-    Future<void> bukaMaps() async {
+  Future<void> bukaMaps() async {
+    final koordinatAda =
+        widget.wisata.latitude.trim().isNotEmpty &&
+        widget.wisata.longitude.trim().isNotEmpty;
+
+    final query = koordinatAda
+        ? '${widget.wisata.latitude},${widget.wisata.longitude}'
+        : '${widget.wisata.nama}, ${widget.wisata.lokasi}';
+
     final url = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=${widget.wisata.latitude},${widget.wisata.longitude}',
+      'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}',
     );
 
     if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
 
-    Future<void> bukaTiket() async {
-    final url = Uri.parse(
-      'https://www.traveloka.com/id-id/flight',
-    );
+  Future<void> bukaTiket() async {
+    final url = Uri.parse('https://www.traveloka.com/id-id/flight');
 
     if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
 
-    Future<void> bukaPenginapan() async {
-    final url = Uri.parse(
-      'https://www.traveloka.com/id-id/hotel',
-    );
+  Future<void> bukaPenginapan() async {
+    final url = Uri.parse('https://www.traveloka.com/id-id/hotel');
 
     if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     }
   }
 
   List<String> ambilFoto() {
+    if (widget.wisata.fotoGaleri.isNotEmpty) {
+      return widget.wisata.fotoGaleri;
+    }
+
     final indexWisata = wisata.indexOf(widget.wisata);
 
     if (indexWisata == -1) {
@@ -92,6 +100,9 @@ class _DetailWisataState extends State<DetailWisata> {
   Widget build(BuildContext context) {
     final daftarFoto = ambilFoto();
 
+    debugPrint('NAMA WISATA: ${widget.wisata.nama}');
+    debugPrint('URL GAMBAR: ${widget.wisata.gambar}');
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
       appBar: AppBar(
@@ -99,9 +110,7 @@ class _DetailWisataState extends State<DetailWisata> {
         foregroundColor: Colors.white,
         title: const Text(
           'Detail Destinasi',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -127,9 +136,7 @@ class _DetailWisataState extends State<DetailWisata> {
                 ),
               );
             },
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-            ),
+            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
           ),
         ],
       ),
@@ -150,11 +157,7 @@ class _DetailWisataState extends State<DetailWisata> {
                       });
                     },
                     itemBuilder: (context, index) {
-                      return Image.asset(
-                        daftarFoto[index],
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      );
+                      return bangunFoto(daftarFoto[index]);
                     },
                   ),
 
@@ -165,21 +168,17 @@ class _DetailWisataState extends State<DetailWisata> {
                       right: 0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          daftarFoto.length,
-                          (index) {
-                            return Container(
-                              width: fotoAktif == index ? 20 : 7,
-                              height: 7,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 3),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            );
-                          },
-                        ),
+                        children: List.generate(daftarFoto.length, (index) {
+                          return Container(
+                            width: fotoAktif == index ? 20 : 7,
+                            height: 7,
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          );
+                        }),
                       ),
                     ),
                 ],
@@ -219,11 +218,7 @@ class _DetailWisataState extends State<DetailWisata> {
                           ),
                         ),
                       ),
-                      const Icon(
-                        Icons.star,
-                        size: 20,
-                        color: Colors.amber,
-                      ),
+                      const Icon(Icons.star, size: 20, color: Colors.amber),
                       const SizedBox(width: 5),
                       Text(
                         widget.wisata.rating,
@@ -245,9 +240,7 @@ class _DetailWisataState extends State<DetailWisata> {
                       icon: const Icon(Icons.map),
                       label: const Text(
                         'Lihat Lokasi di Google Maps',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2563EB),
@@ -263,10 +256,7 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const Text(
                     'Tentang Destinasi',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 10),
@@ -292,28 +282,55 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const Text(
                     'Lokasi Destinasi',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 12),
 
-                  WisataMap(
-                    namaWisata: widget.wisata.nama,
-                    latitude: double.parse(widget.wisata.latitude),
-                    longitude: double.parse(widget.wisata.longitude),
-                  ),
+                  if (widget.wisata.latitude.trim().isNotEmpty &&
+                      widget.wisata.longitude.trim().isNotEmpty &&
+                      double.tryParse(widget.wisata.latitude) != null &&
+                      double.tryParse(widget.wisata.longitude) != null)
+                    WisataMap(
+                      namaWisata: widget.wisata.nama,
+                      latitude: double.parse(widget.wisata.latitude),
+                      longitude: double.parse(widget.wisata.longitude),
+                    )
+                  else
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: const Column(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            size: 35,
+                            color: Color(0xFF2563EB),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Koordinat peta belum tersedia.',
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Gunakan tombol Google Maps untuk mencari lokasi.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
 
                   const SizedBox(height: 25),
 
                   const Text(
                     'Informasi Wisata',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 15),
@@ -346,7 +363,11 @@ class _DetailWisataState extends State<DetailWisata> {
                         child: infoCard(
                           Icons.landscape,
                           'Jenis',
-                          widget.wisata.kategori,
+                          widget.wisata.daftarKategori.isNotEmpty
+                              ? widget.wisata.daftarKategori
+                                    .map((kategori) => kategori.nama)
+                                    .join(', ')
+                              : widget.wisata.kategori,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -364,10 +385,7 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const Text(
                     'Tips Berkunjung',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 15),
@@ -377,10 +395,7 @@ class _DetailWisataState extends State<DetailWisata> {
                     'Pilih waktu berkunjung yang sesuai.',
                   ),
 
-                  tipItem(
-                    Icons.backpack,
-                    'Bawa perlengkapan yang diperlukan.',
-                  ),
+                  tipItem(Icons.backpack, 'Bawa perlengkapan yang diperlukan.'),
 
                   tipItem(
                     Icons.wb_sunny,
@@ -394,18 +409,18 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const SizedBox(height: 28),
 
-TripPlanning(
-  namaWisata: widget.wisata.nama,
-  onMaps: () {
-    bukaMaps();
-  },
-  onTiket: () {
-    bukaTiket();
-  },
-  onPenginapan: () {
-    bukaPenginapan();
-  },
-),
+                  TripPlanning(
+                    namaWisata: widget.wisata.nama,
+                    onMaps: () {
+                      bukaMaps();
+                    },
+                    onTiket: () {
+                      bukaTiket();
+                    },
+                    onPenginapan: () {
+                      bukaPenginapan();
+                    },
+                  ),
 
                   const SizedBox(height: 28),
 
@@ -421,9 +436,7 @@ TripPlanning(
                   Center(
                     child: Text(
                       '© 2026 NusaTrip',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                      ),
+                      style: TextStyle(color: Colors.grey.shade600),
                     ),
                   ),
                 ],
@@ -435,11 +448,7 @@ TripPlanning(
     );
   }
 
-  Widget infoCard(
-    IconData icon,
-    String title,
-    String value,
-  ) {
+  Widget infoCard(IconData icon, String title, String value) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -449,38 +458,22 @@ TripPlanning(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: const Color(0xFF2563EB),
-            size: 25,
-          ),
+          Icon(icon, color: const Color(0xFF2563EB), size: 25),
           const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-            ),
-          ),
+          Text(title, style: const TextStyle(color: Colors.grey, fontSize: 12)),
           const SizedBox(height: 3),
           Text(
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
         ],
       ),
     );
   }
 
-  Widget tipItem(
-    IconData icon,
-    String text,
-  ) {
+  Widget tipItem(IconData icon, String text) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -490,17 +483,9 @@ TripPlanning(
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: const Color(0xFF2563EB),
-          ),
+          Icon(icon, color: const Color(0xFF2563EB)),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
         ],
       ),
     );

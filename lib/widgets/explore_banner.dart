@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/models/wisata.dart';
+import 'wisata_image.dart';
 
 class ExploreBanner extends StatelessWidget {
   final Wisata wisata;
@@ -24,9 +25,11 @@ class ExploreBanner extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           image: DecorationImage(
-            image: AssetImage(wisata.gambar),
-            fit: BoxFit.cover,
-          ),
+                  image: wisata.gambarDariInternet
+                      ? NetworkImage(wisata.gambar)
+                      : AssetImage(wisata.gambar) as ImageProvider,
+                  fit: BoxFit.cover,
+                ),
         ),
         child: Container(
           decoration: BoxDecoration(

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+
 import '/models/wisata.dart';
+import 'wisata_image.dart';
 
 class TrendingCard extends StatelessWidget {
   final Wisata wisata;
   final VoidCallback onTap;
 
-  const TrendingCard({
-    super.key,
-    required this.wisata,
-    required this.onTap,
-  });
+  const TrendingCard({super.key, required this.wisata, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +33,12 @@ class TrendingCard extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(15),
               ),
-              child: Image.asset(
-                wisata.gambar,
+              child: WisataImage(
+                sumber: wisata.gambar,
+                namaWisata: wisata.nama,
+                fallbackAsset: wisata.gambarFallbackLokal,
                 width: double.infinity,
                 height: 120,
-                fit: BoxFit.cover,
               ),
             ),
             Padding(
@@ -59,11 +58,7 @@ class TrendingCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.star,
-                        size: 15,
-                        color: Colors.amber,
-                      ),
+                      const Icon(Icons.star, size: 15, color: Colors.amber),
                       const SizedBox(width: 4),
                       Text(
                         wisata.rating,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../models/wisata.dart';
+import 'wisata_image.dart';
 
 class DestinationCard extends StatelessWidget {
   final Wisata wisata;
@@ -25,7 +27,7 @@ class DestinationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06), // Diperbarui ke withValues
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 14,
               offset: const Offset(0, 5),
             ),
@@ -35,20 +37,25 @@ class DestinationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- FOTO (Menggunakan Expanded agar fleksibel) ---
+            // FOTO
             Expanded(
-              flex: 5, // Porsi 5 bagian dari 9
+              flex: 5,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    wisata.gambar,
+                  WisataImage(
+                    sumber: wisata.gambar,
+                    namaWisata: wisata.nama,
+                    fallbackAsset: wisata.gambarFallbackLokal,
+                    width: double.infinity,
+                    height: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  
-                  // Overlay gradasi tipis di bawah foto agar rating lebih jelas
+
                   Positioned(
-                    bottom: 0, left: 0, right: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
                     child: Container(
                       height: 40,
                       decoration: BoxDecoration(
@@ -64,7 +71,7 @@ class DestinationCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Tombol Favorite
+                  // FAVORIT
                   Positioned(
                     top: 8,
                     right: 8,
@@ -81,19 +88,24 @@ class DestinationCard extends StatelessWidget {
                           child: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
                             size: 18,
-                            color: isFavorite ? Colors.red : const Color(0xFF4B5675),
+                            color: isFavorite
+                                ? Colors.red
+                                : const Color(0xFF4B5675),
                           ),
                         ),
                       ),
                     ),
                   ),
 
-                  // Rating
+                  // RATING
                   Positioned(
                     left: 8,
                     bottom: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
@@ -108,7 +120,7 @@ class DestinationCard extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF111A3A), // Teks Navy
+                              color: Color(0xFF111A3A),
                             ),
                           ),
                         ],
@@ -119,34 +131,36 @@ class DestinationCard extends StatelessWidget {
               ),
             ),
 
-            // --- INFORMASI WISATA (Teks) ---
+            // INFORMASI WISATA
             Expanded(
-              flex: 4, // Porsi 4 bagian dari 9
+              flex: 4,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8), // Padding sedikit dikurangi
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Bagi ruang secara rata
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // Nama Wisata
+                    // NAMA
                     Text(
                       wisata.nama,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 13, // Sedikit dikecilkan agar aman
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF111A3A), // Warna Navy Gelap
+                        color: Color(0xFF111A3A),
                       ),
                     ),
 
-                    // Lokasi
+                    const SizedBox(height: 3),
+
+                    // LOKASI
                     Row(
                       children: [
                         const Icon(
                           Icons.location_on_outlined,
                           size: 12,
-                          color: Color(0xFF4B5675), // Abu Navy
+                          color: Color(0xFF4B5675),
                         ),
                         const SizedBox(width: 3),
                         Expanded(
@@ -155,7 +169,7 @@ class DestinationCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              color: Color(0xFF4B5675), // Abu Navy
+                              color: Color(0xFF4B5675),
                               fontSize: 10,
                             ),
                           ),
@@ -163,19 +177,28 @@ class DestinationCard extends StatelessWidget {
                       ],
                     ),
 
-                    // Kategori
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF3A5EE0).withValues(alpha: 0.1), // Biru transparan
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        wisata.kategori,
-                        style: const TextStyle(
-                          color: Color(0xFF3A5EE0), // Biru Utama
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
+                    const SizedBox(height: 5),
+
+                    // KATEGORI
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF3A5EE0).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          wisata.kategori,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Color(0xFF3A5EE0),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
