@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import '../fungsi/user_data.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,17 +20,16 @@ class _LoginPageState extends State<LoginPage> {
     final user = userData.where((user) => user.email == email);
 
     if (user.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email belum terdaftar.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Email belum terdaftar.')));
       return;
     }
 
     final userDitemukan = user.first;
     if (userDitemukan.password != password) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password salah.')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Password salah.')));
       return;
     }
 
@@ -48,10 +47,15 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
               title: const Text(
                 'Selamat Datang 👋',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -70,7 +74,10 @@ class _LoginPageState extends State<LoginPage> {
                     style: const TextStyle(color: Color(0xFF0F172A)),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined, color: Colors.grey),
+                      prefixIcon: const Icon(
+                        Icons.email_outlined,
+                        color: Colors.grey,
+                      ),
                       filled: true,
                       fillColor: const Color(0xFFF5F9FF),
                       border: OutlineInputBorder(
@@ -86,11 +93,17 @@ class _LoginPageState extends State<LoginPage> {
                     style: const TextStyle(color: Color(0xFF0F172A)),
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
+                      prefixIcon: const Icon(
+                        Icons.lock_outline,
+                        color: Colors.grey,
+                      ),
                       suffixIcon: IconButton(
-                        onPressed: () => setDialogState(() => showPassword = !showPassword),
+                        onPressed: () =>
+                            setDialogState(() => showPassword = !showPassword),
                         icon: Icon(
-                          showPassword ? Icons.visibility : Icons.visibility_off,
+                          showPassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: Colors.grey,
                         ),
                       ),
@@ -115,9 +128,14 @@ class _LoginPageState extends State<LoginPage> {
                       backgroundColor: const Color(0xFF3A5EE0),
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
-                    child: const Text('MASUK', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text(
+                      'MASUK',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ],
@@ -141,7 +159,10 @@ class _LoginPageState extends State<LoginPage> {
       body: Stack(
         children: [
           SizedBox.expand(
-            child: Image.asset('assets/images/gunungbromo.jpg', fit: BoxFit.cover),
+            child: Image.asset(
+              'assets/images/gunungbromo.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
           Container(
             decoration: BoxDecoration(
@@ -189,7 +210,11 @@ class _LoginPageState extends State<LoginPage> {
                         fontWeight: FontWeight.w600,
                         height: 1.5,
                         shadows: [
-                          Shadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 2)),
+                          Shadow(
+                            color: Colors.black54,
+                            blurRadius: 10,
+                            offset: Offset(0, 2),
+                          ),
                         ],
                       ),
                     ),
@@ -204,11 +229,16 @@ class _LoginPageState extends State<LoginPage> {
                           backgroundColor: const Color(0xFF3A5EE0),
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
                         child: const Text(
                           'MASUK',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -218,15 +248,24 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       height: 55,
                       child: OutlinedButton(
-                        onPressed: () => Navigator.pushNamed(context, '/register'),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/register'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white, width: 1.5),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          side: const BorderSide(
+                            color: Colors.white,
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
                         child: const Text(
                           'DAFTAR',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

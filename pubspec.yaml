@@ -81,6 +81,7 @@ flutter:
     - assets/images/gunungrinjani2.jpg
     - assets/images/gunungrinjani3.jpg
     - assets/images/foto_dea.jpg  # <--- BARIS BARU UNTUK FOTO DEA
+    - assets/images/foto_aghnia.jpeg
 
   fonts:
     - family: Nunito
