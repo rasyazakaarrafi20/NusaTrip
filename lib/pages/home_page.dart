@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 import 'profile_page.dart';
 import 'detail_wisata.dart';
 import 'favorite_page.dart';
+import 'trip_page.dart';
 
 import '../fungsi/favorite_data.dart';
 import '../fungsi/wisata_data.dart' as data_lokal;
@@ -51,20 +51,17 @@ class _HomePageState extends State<HomePage> {
 
     // Ambil destinasi dari API.
     try {
-      final hasilWisata =
-          await WisataService().ambilDestinasi();
+      final hasilWisata = await WisataService().ambilDestinasi();
 
-              debugPrint('========== DAFTAR DESTINASI API ==========');
-
-    for (final item in hasilWisata) {
-      debugPrint(
-        'ID: ${item.id} | '
-        'SLUG: ${item.slug} | '
-        'NAMA: ${item.nama}',
-      );
-    }
-
-    debugPrint('========== SELESAI ==========');
+      debugPrint('========== DAFTAR DESTINASI API ==========');
+      for (final item in hasilWisata) {
+        debugPrint(
+          'ID: ${item.id} | '
+          'SLUG: ${item.slug} | '
+          'NAMA: ${item.nama}',
+        );
+      }
+      debugPrint('========== SELESAI ==========');
 
       if (hasilWisata.isNotEmpty) {
         _daftarWisata = hasilWisata;
@@ -80,8 +77,7 @@ class _HomePageState extends State<HomePage> {
 
     // Ambil kategori dari API.
     try {
-      final hasilKategori =
-          await KategoriService().ambilKategori();
+      final hasilKategori = await KategoriService().ambilKategori();
 
       if (hasilKategori.isNotEmpty) {
         _daftarKategori = [
@@ -110,12 +106,8 @@ class _HomePageState extends State<HomePage> {
       _sedangMemuat = false;
     });
 
-    debugPrint(
-      'Jumlah destinasi Home: ${_daftarWisata.length}',
-    );
-    debugPrint(
-      'Jumlah kategori Home: ${_daftarKategori.length}',
-    );
+    debugPrint('Jumlah destinasi Home: ${_daftarWisata.length}');
+    debugPrint('Jumlah kategori Home: ${_daftarKategori.length}');
   }
 
   List<Kategori> _kategoriFallback() {
@@ -175,8 +167,7 @@ class _HomePageState extends State<HomePage> {
 
         // Mendukung data lokal yang masih memakai satu kategori.
         if (tempat.daftarKategori.isEmpty) {
-          cocokKategori =
-              tempat.kategori.toLowerCase() == kategoriDicari;
+          cocokKategori = tempat.kategori.toLowerCase() == kategoriDicari;
         }
       }
 
@@ -191,7 +182,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
-
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF2563EB),
@@ -199,9 +189,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         title: const Text(
           'NusaTrip',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -241,7 +229,6 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 5),
         ],
       ),
-
       body: RefreshIndicator(
         onRefresh: _muatData,
         child: SingleChildScrollView(
@@ -257,9 +244,7 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 5),
-
               const Text(
                 'Temukan destinasi wisata terbaik di seluruh nusantara.',
                 style: TextStyle(
@@ -267,9 +252,7 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 13,
                 ),
               ),
-
               const SizedBox(height: 18),
-
               TextField(
                 onChanged: (value) {
                   setState(() {
@@ -287,9 +270,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 18),
-
               if (_daftarKategori.isNotEmpty)
                 CategorySection(
                   kategoriDipilih: kategoriDipilih,
@@ -299,10 +280,20 @@ class _HomePageState extends State<HomePage> {
                       kategoriDipilih = kategori;
                     });
                   },
+                  onTripTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TripPage(),
+                      ),
+                    ).then((_) {
+                      if (mounted) {
+                        setState(() {});
+                      }
+                    });
+                  },
                 ),
-
               const SizedBox(height: 15),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -322,14 +313,11 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: const Text(
                       'Lihat Semua',
-                      style: TextStyle(
-                        color: Color(0xFF2563EB),
-                      ),
+                      style: TextStyle(color: Color(0xFF2563EB)),
                     ),
                   ),
                 ],
               ),
-
               if (_sedangMemuat)
                 const Padding(
                   padding: EdgeInsets.all(40),
@@ -343,9 +331,7 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.all(40),
                     child: Text(
                       'Destinasi tidak ditemukan',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(color: Colors.grey),
                     ),
                   ),
                 )
@@ -354,27 +340,23 @@ class _HomePageState extends State<HomePage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: hasilPencarian.length,
-                  gridDelegate:
-                      SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: lebarLayar > 700 ? 4 : 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio:
-                        lebarLayar > 700 ? 1.35 : 0.78,
+                    childAspectRatio: lebarLayar > 700 ? 1.35 : 0.78,
                   ),
                   itemBuilder: (context, index) {
                     final tempat = hasilPencarian[index];
 
                     return DestinationCard(
                       wisata: tempat,
-                      isFavorite:
-                          FavoriteData.cekFavorit(tempat),
+                      isFavorite: FavoriteData.cekFavorit(tempat),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                DetailWisata(wisata: tempat),
+                            builder: (context) => DetailWisata(wisata: tempat),
                           ),
                         ).then((_) {
                           if (mounted) setState(() {});
@@ -392,7 +374,6 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-
               if (_menggunakanFallback && !_sedangMemuat)
                 const Padding(
                   padding: EdgeInsets.only(top: 12),
@@ -404,9 +385,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-
               const SizedBox(height: 25),
-
               Center(
                 child: Text(
                   '© 2026 NusaTrip',

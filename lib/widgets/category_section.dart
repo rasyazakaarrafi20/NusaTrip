@@ -5,12 +5,14 @@ class CategorySection extends StatelessWidget {
   final String kategoriDipilih;
   final List<Kategori> daftarKategori;
   final Function(String) onKategoriChanged;
+  final VoidCallback? onTripTap;
 
   const CategorySection({
     super.key,
     required this.kategoriDipilih,
     required this.daftarKategori,
     required this.onKategoriChanged,
+    this.onTripTap,
   });
 
   static const List<Color> warnaKategori = [
@@ -28,30 +30,32 @@ class CategorySection extends StatelessWidget {
       height: 70,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: daftarKategori.length,
-        separatorBuilder: (context, index) =>
-            const SizedBox(width: 8),
+        itemCount: daftarKategori.length + 1,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final item = daftarKategori[index];
-          final warna =
-              warnaKategori[index % warnaKategori.length];
+          final isTrip = index == daftarKategori.length;
+          final item = isTrip ? null : daftarKategori[index];
 
-          final aktif = kategoriDipilih == item.nama;
+          final warna = isTrip
+              ? const Color(0xFFEA580C)
+              : warnaKategori[index % warnaKategori.length];
+
+          final aktif = !isTrip && kategoriDipilih == item!.nama;
 
           return GestureDetector(
-            onTap: () => onKategoriChanged(item.nama),
+            onTap: isTrip
+                ? onTripTap
+                : () => onKategoriChanged(item!.nama),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 68,
+              width: isTrip ? 96 : 68,
               decoration: BoxDecoration(
                 color: warna.withValues(
                   alpha: aktif ? 0.18 : 0.10,
                 ),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: aktif
-                      ? warna
-                      : warna.withValues(alpha: 0.20),
+                  color: aktif ? warna : warna.withValues(alpha: 0.20),
                   width: aktif ? 1.5 : 1,
                 ),
               ),
@@ -59,17 +63,15 @@ class CategorySection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    item.icon,
+                    isTrip ? Icons.luggage_outlined : item!.icon,
                     size: 23,
                     color: warna,
                   ),
                   const SizedBox(height: 4),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 2,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
                     child: Text(
-                      item.nama,
+                      isTrip ? 'Rencana Trip' : item!.nama,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
