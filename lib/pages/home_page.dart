@@ -13,7 +13,6 @@ import '../widgets/destination_card.dart';
 import '../widgets/explore_banner.dart';
 
 import 'detail_wisata.dart';
-import 'favorite_page.dart';
 import 'profile_page.dart';
 import 'trip_page.dart';
 
