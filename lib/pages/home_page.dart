@@ -13,7 +13,6 @@ import '../widgets/destination_card.dart';
 import '../widgets/explore_banner.dart';
 
 import 'detail_wisata.dart';
-import 'favorite_page.dart';
 import 'profile_page.dart';
 import 'trip_page.dart';
 
@@ -38,6 +37,8 @@ class _HomePageState extends State<HomePage> {
   Timer? _bannerTimer;
   int _bannerIndex = 0;
 
+  List<Wisata> _destinasiTerbaik = [];
+
   @override
   void initState() {
     super.initState();
@@ -45,24 +46,21 @@ class _HomePageState extends State<HomePage> {
     _bannerController = PageController();
 
     // Banner berganti otomatis setiap 4 detik.
-    _bannerTimer = Timer.periodic(
-      const Duration(seconds: 4),
-      (timer) {
-        if (!mounted ||
-            !_bannerController.hasClients ||
-            _daftarWisata.length <= 1) {
-          return;
-        }
+    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (!mounted ||
+          !_bannerController.hasClients ||
+          _destinasiTerbaik.length <= 1) {
+        return;
+      }
 
-        final nextIndex = (_bannerIndex + 1) % _daftarWisata.length;
+      final nextIndex = (_bannerIndex + 1) % _destinasiTerbaik.length;
 
-        _bannerController.animateToPage(
-          nextIndex,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      },
-    );
+      _bannerController.animateToPage(
+        nextIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    });
 
     _muatData();
   }
@@ -78,9 +76,7 @@ class _HomePageState extends State<HomePage> {
   void _bukaDetail(Wisata tempat) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => DetailWisata(wisata: tempat),
-      ),
+      MaterialPageRoute(builder: (context) => DetailWisata(wisata: tempat)),
     ).then((_) {
       if (mounted) {
         setState(() {});
@@ -143,12 +139,7 @@ class _HomePageState extends State<HomePage> {
 
       if (hasilKategori.isNotEmpty) {
         _daftarKategori = [
-          Kategori(
-            id: 0,
-            nama: 'Semua',
-            icon: Icons.apps,
-            slug: 'semua',
-          ),
+          Kategori(id: 0, nama: 'Semua', icon: Icons.apps, slug: 'semua'),
           ...hasilKategori,
         ];
       } else {
@@ -163,6 +154,8 @@ class _HomePageState extends State<HomePage> {
 
     if (!mounted) return;
 
+    _ambilDestinasiTerbaik();
+
     setState(() {
       _menggunakanFallback = fallback;
       _sedangMemuat = false;
@@ -173,39 +166,31 @@ class _HomePageState extends State<HomePage> {
     debugPrint('Jumlah kategori Home: ${_daftarKategori.length}');
   }
 
+  void _ambilDestinasiTerbaik() {
+    final salinan = List<Wisata>.from(_daftarWisata);
+
+    salinan.sort((a, b) {
+      final ratingA = double.tryParse(a.rating) ?? 0.0;
+      final ratingB = double.tryParse(b.rating) ?? 0.0;
+      return ratingB.compareTo(ratingA);
+    });
+
+    _destinasiTerbaik = salinan.take(5).toList();
+  }
+
   // Kategori cadangan jika API tidak tersedia.
   List<Kategori> _kategoriFallback() {
     return [
-      Kategori(
-        id: 0,
-        nama: 'Semua',
-        icon: Icons.apps,
-        slug: 'semua',
-      ),
-      Kategori(
-        id: 1,
-        nama: 'Alam',
-        icon: Icons.park,
-        slug: 'alam',
-      ),
+      Kategori(id: 0, nama: 'Semua', icon: Icons.apps, slug: 'semua'),
+      Kategori(id: 1, nama: 'Alam', icon: Icons.park, slug: 'alam'),
       Kategori(
         id: 2,
         nama: 'Budaya',
         icon: Icons.temple_buddhist,
         slug: 'budaya',
       ),
-      Kategori(
-        id: 3,
-        nama: 'Pantai',
-        icon: Icons.beach_access,
-        slug: 'pantai',
-      ),
-      Kategori(
-        id: 4,
-        nama: 'Gunung',
-        icon: Icons.terrain,
-        slug: 'gunung',
-      ),
+      Kategori(id: 3, nama: 'Pantai', icon: Icons.beach_access, slug: 'pantai'),
+      Kategori(id: 4, nama: 'Gunung', icon: Icons.terrain, slug: 'gunung'),
     ];
   }
 
@@ -231,8 +216,7 @@ class _HomePageState extends State<HomePage> {
         });
 
         if (tempat.daftarKategori.isEmpty) {
-          cocokKategori =
-              tempat.kategori.toLowerCase() == kategoriDicari;
+          cocokKategori = tempat.kategori.toLowerCase() == kategoriDicari;
         }
       }
 
@@ -257,44 +241,26 @@ class _HomePageState extends State<HomePage> {
           'NusaTrip',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+
         actions: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(
-              minWidth: 45,
-              minHeight: 45,
-            ),
+          TextButton.icon(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const FavoritePage(),
-                ),
-              ).then((_) {
-                if (mounted) {
-                  setState(() {});
-                }
-              });
-            },
-            icon: const Icon(Icons.favorite_border),
-          ),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(
-              minWidth: 45,
-              minHeight: 45,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfilePage(),
-                ),
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
               );
             },
-            icon: const Icon(Icons.person_outline),
+            icon: const Icon(Icons.person_outline, color: Colors.white),
+            label: const Text(
+              'Profil',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
           ),
-          const SizedBox(width: 5),
+          const SizedBox(width: 10),
         ],
       ),
 
@@ -308,20 +274,14 @@ class _HomePageState extends State<HomePage> {
             children: [
               const Text(
                 'Jelajahi Indonesia 🇮🇩',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 5),
 
               const Text(
                 'Temukan destinasi wisata terbaik di seluruh nusantara.',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: Colors.grey, fontSize: 13),
               ),
 
               const SizedBox(height: 18),
@@ -350,27 +310,24 @@ class _HomePageState extends State<HomePage> {
               // BANNER DESTINASI WISATA
               const Text(
                 'Destinasi Pilihan',
-                style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 12),
 
-              if (_daftarWisata.isNotEmpty)
+              if (_destinasiTerbaik.isNotEmpty)
                 SizedBox(
                   height: 210,
                   child: PageView.builder(
                     controller: _bannerController,
-                    itemCount: _daftarWisata.length,
+                    itemCount: _destinasiTerbaik.length,
                     onPageChanged: (index) {
                       setState(() {
                         _bannerIndex = index;
                       });
                     },
                     itemBuilder: (context, index) {
-                      final tempat = _daftarWisata[index];
+                      final tempat = _destinasiTerbaik[index];
 
                       return ExploreBanner(
                         wisata: tempat,
@@ -402,28 +359,25 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 12),
 
               // INDIKATOR BANNER
-              if (_daftarWisata.length > 1)
+              if (_destinasiTerbaik.length > 1)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    _daftarWisata.length,
-                    (index) {
-                      final aktif = _bannerIndex == index;
+                  children: List.generate(_destinasiTerbaik.length, (index) {
+                    final aktif = _bannerIndex == index;
 
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        width: aktif ? 22 : 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: aktif
-                              ? const Color(0xFF2563EB)
-                              : Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      );
-                    },
-                  ),
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: aktif ? 22 : 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: aktif
+                            ? const Color(0xFF2563EB)
+                            : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    );
+                  }),
                 ),
 
               const SizedBox(height: 22),
@@ -441,9 +395,7 @@ class _HomePageState extends State<HomePage> {
                   onTripTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const TripPage(),
-                      ),
+                      MaterialPageRoute(builder: (context) => const TripPage()),
                     ).then((_) {
                       if (mounted) {
                         setState(() {});
@@ -455,39 +407,15 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 15),
 
               // DESTINASI POPULER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Destinasi Populer',
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        kategoriDipilih = 'Semua';
-                        search = '';
-                      });
-                    },
-                    child: const Text(
-                      'Lihat Semua',
-                      style: TextStyle(
-                        color: Color(0xFF2563EB),
-                      ),
-                    ),
-                  ),
-                ],
+              const Text(
+                'Destinasi Populer',
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
               ),
 
               if (_sedangMemuat)
                 const Padding(
                   padding: EdgeInsets.all(40),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 )
               else if (hasilPencarian.isEmpty)
                 const Center(
@@ -505,14 +433,17 @@ class _HomePageState extends State<HomePage> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: hasilPencarian.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: lebarLayar > 700 ? 4 : 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: lebarLayar > 700 ? 1.35 : 0.78,
+                    crossAxisCount: lebarLayar > 900
+                        ? 4
+                        : (lebarLayar > 600 ? 3 : 2),
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: lebarLayar > 900
+                        ? 1.0
+                        : (lebarLayar > 600 ? 0.9 : 0.8),
                   ),
                   itemBuilder: (context, index) {
                     final tempat = hasilPencarian[index];
-
                     return DestinationCard(
                       wisata: tempat,
                       isFavorite: FavoriteData.cekFavorit(tempat),
@@ -531,10 +462,7 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.only(top: 12),
                   child: Text(
                     'Sebagian data API gagal dimuat. Data lokal digunakan sebagai cadangan.',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: Colors.orange, fontSize: 11),
                   ),
                 ),
 
@@ -544,10 +472,7 @@ class _HomePageState extends State<HomePage> {
               Center(
                 child: Text(
                   '© 2026 NusaTrip',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                 ),
               ),
             ],
