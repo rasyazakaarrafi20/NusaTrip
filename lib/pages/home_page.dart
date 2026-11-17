@@ -1,21 +1,21 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-import 'profile_page.dart';
-import 'detail_wisata.dart';
-import 'favorite_page.dart';
-import 'trip_page.dart';
+import 'package:flutter/material.dart';
 
 import '../fungsi/favorite_data.dart';
 import '../fungsi/wisata_data.dart' as data_lokal;
-
-import '../models/wisata.dart';
 import '../models/kategori.dart';
-
-import '../services/wisata_service.dart';
+import '../models/wisata.dart';
 import '../services/kategori_service.dart';
-
+import '../services/wisata_service.dart';
 import '../widgets/category_section.dart';
 import '../widgets/destination_card.dart';
+import '../widgets/explore_banner.dart';
+
+import 'detail_wisata.dart';
+import 'favorite_page.dart';
+import 'profile_page.dart';
+import 'trip_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,12 +34,72 @@ class _HomePageState extends State<HomePage> {
   bool _sedangMemuat = true;
   bool _menggunakanFallback = false;
 
+  late final PageController _bannerController;
+  Timer? _bannerTimer;
+  int _bannerIndex = 0;
+
   @override
   void initState() {
     super.initState();
+
+    _bannerController = PageController();
+
+    // Banner berganti otomatis setiap 4 detik.
+    _bannerTimer = Timer.periodic(
+      const Duration(seconds: 4),
+      (timer) {
+        if (!mounted ||
+            !_bannerController.hasClients ||
+            _daftarWisata.length <= 1) {
+          return;
+        }
+
+        final nextIndex = (_bannerIndex + 1) % _daftarWisata.length;
+
+        _bannerController.animateToPage(
+          nextIndex,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      },
+    );
+
     _muatData();
   }
 
+  @override
+  void dispose() {
+    _bannerTimer?.cancel();
+    _bannerController.dispose();
+    super.dispose();
+  }
+
+  // Membuka halaman detail wisata.
+  void _bukaDetail(Wisata tempat) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailWisata(wisata: tempat),
+      ),
+    ).then((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  // Mengubah status favorit wisata.
+  void _ubahFavorit(Wisata tempat) {
+    setState(() {
+      if (FavoriteData.cekFavorit(tempat)) {
+        FavoriteData.hapus(tempat);
+      } else {
+        FavoriteData.tambah(tempat);
+      }
+    });
+  }
+
+  // Mengambil data destinasi dan kategori.
   Future<void> _muatData() async {
     if (mounted) {
       setState(() {
@@ -49,11 +109,12 @@ class _HomePageState extends State<HomePage> {
 
     bool fallback = false;
 
-    // Ambil destinasi dari API.
+    // Mengambil destinasi dari API.
     try {
       final hasilWisata = await WisataService().ambilDestinasi();
 
       debugPrint('========== DAFTAR DESTINASI API ==========');
+
       for (final item in hasilWisata) {
         debugPrint(
           'ID: ${item.id} | '
@@ -61,6 +122,7 @@ class _HomePageState extends State<HomePage> {
           'NAMA: ${item.nama}',
         );
       }
+
       debugPrint('========== SELESAI ==========');
 
       if (hasilWisata.isNotEmpty) {
@@ -75,7 +137,7 @@ class _HomePageState extends State<HomePage> {
       fallback = true;
     }
 
-    // Ambil kategori dari API.
+    // Mengambil kategori dari API.
     try {
       final hasilKategori = await KategoriService().ambilKategori();
 
@@ -104,12 +166,14 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _menggunakanFallback = fallback;
       _sedangMemuat = false;
+      _bannerIndex = 0;
     });
 
     debugPrint('Jumlah destinasi Home: ${_daftarWisata.length}');
     debugPrint('Jumlah kategori Home: ${_daftarKategori.length}');
   }
 
+  // Kategori cadangan jika API tidak tersedia.
   List<Kategori> _kategoriFallback() {
     return [
       Kategori(
@@ -145,6 +209,7 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
+  // Memfilter destinasi berdasarkan pencarian dan kategori.
   List<Wisata> get _hasilPencarian {
     return _daftarWisata.where((tempat) {
       final kataKunci = search.toLowerCase().trim();
@@ -165,9 +230,9 @@ class _HomePageState extends State<HomePage> {
               kategori.slug.toLowerCase() == kategoriDicari;
         });
 
-        // Mendukung data lokal yang masih memakai satu kategori.
         if (tempat.daftarKategori.isEmpty) {
-          cocokKategori = tempat.kategori.toLowerCase() == kategoriDicari;
+          cocokKategori =
+              tempat.kategori.toLowerCase() == kategoriDicari;
         }
       }
 
@@ -182,6 +247,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
+
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF2563EB),
@@ -205,7 +271,9 @@ class _HomePageState extends State<HomePage> {
                   builder: (context) => const FavoritePage(),
                 ),
               ).then((_) {
-                if (mounted) setState(() {});
+                if (mounted) {
+                  setState(() {});
+                }
               });
             },
             icon: const Icon(Icons.favorite_border),
@@ -229,6 +297,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 5),
         ],
       ),
+
       body: RefreshIndicator(
         onRefresh: _muatData,
         child: SingleChildScrollView(
@@ -244,7 +313,9 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+
               const SizedBox(height: 5),
+
               const Text(
                 'Temukan destinasi wisata terbaik di seluruh nusantara.',
                 style: TextStyle(
@@ -252,7 +323,10 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 13,
                 ),
               ),
+
               const SizedBox(height: 18),
+
+              // PENCARIAN DESTINASI
               TextField(
                 onChanged: (value) {
                   setState(() {
@@ -270,7 +344,91 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
+
+              const SizedBox(height: 22),
+
+              // BANNER DESTINASI WISATA
+              const Text(
+                'Destinasi Pilihan',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              if (_daftarWisata.isNotEmpty)
+                SizedBox(
+                  height: 210,
+                  child: PageView.builder(
+                    controller: _bannerController,
+                    itemCount: _daftarWisata.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _bannerIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      final tempat = _daftarWisata[index];
+
+                      return ExploreBanner(
+                        wisata: tempat,
+                        isFavorite: FavoriteData.cekFavorit(tempat),
+                        onTap: () {
+                          _bukaDetail(tempat);
+                        },
+                        onFavorite: () {
+                          _ubahFavorit(tempat);
+                        },
+                      );
+                    },
+                  ),
+                )
+              else
+                Container(
+                  height: 210,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Text(
+                    'Belum ada destinasi untuk ditampilkan.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+
+              const SizedBox(height: 12),
+
+              // INDIKATOR BANNER
+              if (_daftarWisata.length > 1)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _daftarWisata.length,
+                    (index) {
+                      final aktif = _bannerIndex == index;
+
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        width: aktif ? 22 : 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: aktif
+                              ? const Color(0xFF2563EB)
+                              : Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+              const SizedBox(height: 22),
+
+              // KATEGORI BERANDA
               if (_daftarKategori.isNotEmpty)
                 CategorySection(
                   kategoriDipilih: kategoriDipilih,
@@ -293,7 +451,10 @@ class _HomePageState extends State<HomePage> {
                     });
                   },
                 ),
+
               const SizedBox(height: 15),
+
+              // DESTINASI POPULER
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -313,11 +474,14 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: const Text(
                       'Lihat Semua',
-                      style: TextStyle(color: Color(0xFF2563EB)),
+                      style: TextStyle(
+                        color: Color(0xFF2563EB),
+                      ),
                     ),
                   ),
                 ],
               ),
+
               if (_sedangMemuat)
                 const Padding(
                   padding: EdgeInsets.all(40),
@@ -353,27 +517,15 @@ class _HomePageState extends State<HomePage> {
                       wisata: tempat,
                       isFavorite: FavoriteData.cekFavorit(tempat),
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailWisata(wisata: tempat),
-                          ),
-                        ).then((_) {
-                          if (mounted) setState(() {});
-                        });
+                        _bukaDetail(tempat);
                       },
                       onFavorite: () {
-                        setState(() {
-                          if (FavoriteData.cekFavorit(tempat)) {
-                            FavoriteData.hapus(tempat);
-                          } else {
-                            FavoriteData.tambah(tempat);
-                          }
-                        });
+                        _ubahFavorit(tempat);
                       },
                     );
                   },
                 ),
+
               if (_menggunakanFallback && !_sedangMemuat)
                 const Padding(
                   padding: EdgeInsets.only(top: 12),
@@ -385,7 +537,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+
               const SizedBox(height: 25),
+
+              // FOOTER
               Center(
                 child: Text(
                   '© 2026 NusaTrip',
