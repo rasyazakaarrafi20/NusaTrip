@@ -25,7 +25,7 @@ class AboutMe extends StatelessWidget {
       'nim': '25051204400',
       'role': 'UI/UX & Frontend',
       'instagram': 'fau.zanrf',
-      'image': '',
+      'image': 'assets/images/foto_fauzan.jpg',
     },
     {
       'name': 'Aghnia Khairi Faza Maverika',
