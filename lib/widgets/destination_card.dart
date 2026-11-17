@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/wisata.dart';
 import 'wisata_image.dart';
 
-class DestinationCard extends StatelessWidget {
+class DestinationCard extends StatefulWidget {
   final Wisata wisata;
   final bool isFavorite;
   final VoidCallback onTap;
@@ -18,195 +18,205 @@ class DestinationCard extends StatelessWidget {
   });
 
   @override
+  State<DestinationCard> createState() => _DestinationCardState();
+}
+
+class _DestinationCardState extends State<DestinationCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 14,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // FOTO
-            Expanded(
-              flex: 5,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  WisataImage(
-                    sumber: wisata.gambar,
-                    namaWisata: wisata.nama,
-                    fallbackAsset: wisata.gambarFallbackLokal,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withValues(alpha: 0.4),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // FAVORIT
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Material(
-                      color: Colors.white,
-                      shape: const CircleBorder(),
-                      elevation: 2,
-                      child: InkWell(
-                        onTap: onFavorite,
-                        customBorder: const CircleBorder(),
-                        child: SizedBox(
-                          width: 32,
-                          height: 32,
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            size: 18,
-                            color: isFavorite
-                                ? Colors.red
-                                : const Color(0xFF4B5675),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // RATING
-                  Positioned(
-                    left: 8,
-                    bottom: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.star, size: 12, color: Colors.amber),
-                          const SizedBox(width: 3),
-                          Text(
-                            wisata.rating,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF111A3A),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _isHovered ? 0.12 : 0.05),
+                blurRadius: _isHovered ? 20 : 10,
+                offset: Offset(0, _isHovered ? 8 : 4),
               ),
-            ),
-
-            // INFORMASI WISATA
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 6,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    // NAMA
-                    Text(
-                      wisata.nama,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF111A3A),
+                    WisataImage(
+                      sumber: widget.wisata.gambar,
+                      namaWisata: widget.wisata.nama,
+                      fallbackAsset: widget.wisata.gambarFallbackLokal,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.5),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-
-                    const SizedBox(height: 3),
-
-                    // LOKASI
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.location_on_outlined,
-                          size: 12,
-                          color: Color(0xFF4B5675),
-                        ),
-                        const SizedBox(width: 3),
-                        Expanded(
-                          child: Text(
-                            wisata.lokasi,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF4B5675),
-                              fontSize: 10,
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Material(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        shape: const CircleBorder(),
+                        elevation: 4,
+                        child: InkWell(
+                          onTap: widget.onFavorite,
+                          customBorder: const CircleBorder(),
+                          child: SizedBox(
+                            width: 34,
+                            height: 34,
+                            child: Icon(
+                              widget.isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 18,
+                              color: widget.isFavorite
+                                  ? Colors.red
+                                  : const Color(0xFF4B5675),
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-
-                    const SizedBox(height: 5),
-
-                    // KATEGORI
-                    Flexible(
+                    Positioned(
+                      left: 10,
+                      bottom: 10,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 3,
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF3A5EE0).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black12, blurRadius: 4),
+                          ],
                         ),
-                        child: Text(
-                          wisata.kategori,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Color(0xFF3A5EE0),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              size: 14,
+                              color: Colors.amber,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              widget.wisata.rating,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF111A3A),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 4,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.wisata.nama,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF111A3A),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on,
+                                size: 14,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  widget.wisata.lokasi,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const Spacer(),
+
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          widget.wisata.kategori,
+                          style: const TextStyle(
+                            color: Color(0xFF2563EB),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
