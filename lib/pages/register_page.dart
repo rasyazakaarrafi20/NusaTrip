@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
-import '../fungsi/user_data.dart';
-import '../models/user.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,8 +15,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
 
   bool showPassword = false;
+  bool _isLoading = false; // Tambahan indikator loading
 
-  void daftar() {
+  Future<void> daftar() async {
     final nama = namaController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
@@ -29,26 +29,46 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    final emailSudahAda = userData.any((user) => user.email == email);
-    if (emailSudahAda) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email sudah terdaftar.')),
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Memanggil API Supabase untuk mendaftar
+      final response = await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+        // Menyimpan nama ke metadata user di Supabase
+        data: {'full_name': nama}, 
       );
-      return;
+
+      if (response.user != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Pendaftaran berhasil! Silakan masuk.')),
+          );
+          Navigator.pop(context); // Kembali ke halaman login
+        }
+      }
+    } on AuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal Mendaftar: ${e.message}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Terjadi kesalahan: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
-
-    final userBaru = User(
-      id: userData.length + 1,
-      nama: nama,
-      email: email,
-      password: password,
-    );
-    userData.add(userBaru);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pendaftaran berhasil.')),
-    );
-    Navigator.pop(context);
   }
 
   @override
@@ -71,6 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      enabled: !_isLoading, // Disable saat loading
       style: const TextStyle(color: Color(0xFF0F172A)),
       decoration: InputDecoration(
         labelText: label,
@@ -218,7 +239,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           width: double.infinity,
                           height: 52,
                           child: ElevatedButton(
-                            onPressed: daftar,
+                            onPressed: _isLoading ? null : daftar,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF3A5EE0),
                               foregroundColor: Colors.white,
@@ -227,10 +248,21 @@ class _RegisterPageState extends State<RegisterPage> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                             ),
-                            child: const Text(
-                              'DAFTAR',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    'DAFTAR',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  ),
                           ),
                         ),
                       ],

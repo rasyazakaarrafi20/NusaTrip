@@ -1,15 +1,12 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class BottomNav extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const BottomNav({
-    super.key,
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const BottomNav({super.key, required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +19,9 @@ class BottomNav extends StatelessWidget {
           child: Container(
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.85), // Selalu putih transparan
+              color: Colors.white.withValues(
+                alpha: 0.85,
+              ), // Selalu putih transparan
               borderRadius: BorderRadius.circular(50),
               boxShadow: [
                 BoxShadow(
@@ -39,9 +38,27 @@ class BottomNav extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItem(context, 0, Icons.home_outlined, Icons.home, 'Home'),
-                _buildNavItem(context, 1, Icons.explore_outlined, Icons.explore, 'Explore'),
-                _buildNavItem(context, 2, Icons.favorite_border, Icons.favorite, 'Favorit'),
+                _buildNavItem(
+                  context,
+                  0,
+                  Icons.home_outlined,
+                  Icons.home,
+                  'Home',
+                ),
+                _buildNavItem(
+                  context,
+                  1,
+                  Icons.history,
+                  Icons.history,
+                  'Riwayat',
+                ),
+                _buildNavItem(
+                  context,
+                  2,
+                  Icons.favorite_border,
+                  Icons.favorite,
+                  'Favorit',
+                ),
               ],
             ),
           ),
@@ -50,12 +67,19 @@ class BottomNav extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, int index, IconData icon, IconData activeIcon, String label) {
+  Widget _buildNavItem(
+    BuildContext context,
+    int index,
+    IconData icon,
+    IconData activeIcon,
+    String label,
+  ) {
     final bool isActive = currentIndex == index;
     final primaryColor = Theme.of(context).colorScheme.primary;
-    
+
     return Expanded(
-      child: GestureDetector( // Pakai GestureDetector murni agar tidak ada splash bulat gelap
+      child: GestureDetector(
+        // Pakai GestureDetector murni agar tidak ada splash bulat gelap
         onTap: () => onTap(index),
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
@@ -72,7 +96,7 @@ class BottomNav extends StatelessWidget {
               Icon(
                 isActive ? activeIcon : icon,
                 // Ganti Colors.grey dengan #4B5675 (Abu Navy Gelap) agar kontras
-                color: isActive ? Colors.white : const Color(0xFF4B5675), 
+                color: isActive ? Colors.white : const Color(0xFF4B5675),
                 size: 24,
               ),
               const SizedBox(height: 4),

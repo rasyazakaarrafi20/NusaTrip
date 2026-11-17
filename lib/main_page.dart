@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'pages/home_page.dart';
-import 'pages/explore_page.dart';
 import 'pages/favorite_page.dart';
+import 'pages/trip_page.dart';
 import 'widgets/bottom_nav.dart';
 
 class MainPage extends StatefulWidget {
@@ -20,11 +20,16 @@ class _MainPageState extends State<MainPage> {
     dariNavbar: true,
   );
 
+  Widget historyPage = TripPage(
+    key: UniqueKey(),
+    sebagaiRiwayat: true,
+  );
+
   @override
   Widget build(BuildContext context) {
     final pages = [
       const HomePage(),
-      const ExplorePage(),
+      historyPage,
       favoritePage,
     ];
 
@@ -42,6 +47,12 @@ class _MainPageState extends State<MainPage> {
               favoritePage = FavoritePage(
                 key: UniqueKey(),
                 dariNavbar: true,
+              );
+            }
+            if (index == 1) {
+              historyPage = TripPage(
+                key: UniqueKey(),
+                sebagaiRiwayat: true,
               );
             }
             currentIndex = index;

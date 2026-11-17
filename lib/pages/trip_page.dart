@@ -4,7 +4,12 @@ import '../fungsi/trip_data.dart';
 import '../models/trip_plan.dart';
 
 class TripPage extends StatefulWidget {
-  const TripPage({super.key});
+  final bool sebagaiRiwayat;
+
+  const TripPage({
+    super.key,
+    this.sebagaiRiwayat = false,
+  });
 
   @override
   State<TripPage> createState() => _TripPageState();
@@ -67,35 +72,41 @@ class _TripPageState extends State<TripPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
       appBar: AppBar(
-        title: const Text(
-          'Rencana Perjalanan',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          widget.sebagaiRiwayat
+              ? 'Riwayat Perjalanan'
+              : 'Rencana Perjalanan',
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
       ),
       body: daftarTrip.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.luggage_outlined,
                     size: 70,
                     color: Colors.grey,
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Text(
-                    'Belum ada rencana perjalanan',
-                    style: TextStyle(
+                    widget.sebagaiRiwayat
+                        ? 'Belum ada riwayat perjalanan'
+                        : 'Belum ada rencana perjalanan',
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
-                    'Buat rencana dari halaman detail wisata.',
-                    style: TextStyle(color: Colors.grey),
+                    widget.sebagaiRiwayat
+                        ? 'Rencana perjalanan yang kamu simpan akan muncul di sini.'
+                        : 'Buat rencana dari halaman detail wisata.',
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ],
               ),

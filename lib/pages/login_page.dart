@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../fungsi/user_data.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,37 +10,67 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool showPassword = false;
+  bool _isLoading = false; // Tambahan untuk indikator loading
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void login() {
+  // Fungsi Login yang sudah diubah ke Supabase
+  Future<void> login() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
-    final user = userData.where((user) => user.email == email);
 
-    if (user.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Email belum terdaftar.')));
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email dan password tidak boleh kosong.')),
+      );
       return;
     }
 
-    final userDitemukan = user.first;
-    if (userDitemukan.password != password) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Password salah.')));
-      return;
-    }
+    setState(() {
+      _isLoading = true; // Tampilkan loading
+    });
 
-    userAktif = userDitemukan;
-    Navigator.pop(context);
-    Navigator.pushReplacementNamed(context, '/home');
+    try {
+      // Memanggil API Supabase untuk login
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      if (response.user != null) {
+        // Jika berhasil
+        if (mounted) {
+          Navigator.pop(context); // Tutup dialog
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      }
+    } on AuthException catch (e) {
+      // Jika gagal (misal password salah)
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Gagal: ${e.message}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Terjadi kesalahan: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false; // Sembunyikan loading
+        });
+      }
+    }
   }
 
   // POPUP LOGIN
   void tampilkanLogin() {
     showDialog(
       context: context,
+      barrierDismissible: !_isLoading, // Tidak bisa ditutup saat loading
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -68,9 +97,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Textfield dengan gaya warna gelap
+                  
+                  // Textfield Email
                   TextField(
                     controller: emailController,
+                    enabled: !_isLoading, // Disable saat loading
                     style: const TextStyle(color: Color(0xFF0F172A)),
                     decoration: InputDecoration(
                       labelText: 'Email',
@@ -87,8 +118,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 15),
+                  
+                  // Textfield Password
                   TextField(
                     controller: passwordController,
+                    enabled: !_isLoading, // Disable saat loading
                     obscureText: !showPassword,
                     style: const TextStyle(color: Color(0xFF0F172A)),
                     decoration: InputDecoration(
@@ -123,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: login,
+                    onPressed: _isLoading ? null : login, // Disable tombol saat loading
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF3A5EE0),
                       foregroundColor: Colors.white,
@@ -132,10 +166,19 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: const Text(
-                      'MASUK',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'MASUK',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                   ),
                 ),
               ],

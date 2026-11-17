@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // Tambahkan import ini
+
 import 'pages/login_page.dart';
 import 'pages/register_page.dart';
 import 'main_page.dart';
 import 'pages/splash_screen.dart'; 
 
-void main() {
+void main() async {
+  // Wajib dipanggil sebelum inisialisasi Supabase
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inisialisasi Supabase (Sudah dimasukkan URL dan Key kamu)
+  await Supabase.initialize(
+    url: 'https://sujcirezycmbyucenhpo.supabase.co', 
+    anonKey: 'sb_publishable_d5VAD7vu-pOl2CeSr3-83Q_FFa6T6L6', 
+  );
+
   runApp(const MyApp());
 }
 
@@ -14,7 +25,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // --- PALET WARNA SESUAI PROMPT ---
     const primaryColor = Color(0xFF3A5EE0); // Biru Utama
     const accentColor = Color(0xFFFF8A3D);  // Oranye
     const bgColorLight = Color(0xFFF3F6FF); // Background Terang
