@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
 
 import 'about_me.dart';
 import 'account_page.dart';
 import 'favorite_page.dart';
 import 'trip_page.dart';
-
-import '../fungsi/user_data.dart';
 
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_item.dart';
@@ -21,6 +20,21 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 1. Mengambil data user yang sedang login dari Supabase
+    final user = Supabase.instance.client.auth.currentUser;
+
+    // 2. Mengambil nama dari metadata (yang disimpan saat register)
+    final namaUser = user?.userMetadata?['full_name'] ?? 'Pengguna NusaTrip';
+    final emailUser = user?.email ?? '-';
+
+    // 3. Menghitung jumlah review (mencocokkan ID Supabase dengan data lokal)
+    // Jika kamu belum memigrasi review ke Supabase, ini akan menghitung berdasarkan ID string
+    final jumlahReview = user == null
+        ? 0
+        : reviewData
+            .where((review) => review.idUser.toString() == user.id)
+            .length;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF2563EB),
@@ -39,22 +53,17 @@ class ProfilePage extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
 
+            // Tampilkan Nama dan Email dari Supabase
             ProfileHeader(
-              nama: userAktif?.nama ?? 'Pengguna',
-              email: userAktif?.email ?? '-',
+              nama: namaUser,
+              email: emailUser,
             ),
 
             const SizedBox(height: 25),
 
             ProfileStats(
               jumlahFavorit: FavoriteData.favorit.length,
-              jumlahReview: userAktif == null
-                  ? 0
-                  : reviewData
-                      .where(
-                        (review) => review.idUser == userAktif!.id,
-                      )
-                      .length,
+              jumlahReview: jumlahReview,
             ),
 
             const SizedBox(height: 25),
@@ -121,14 +130,15 @@ class ProfilePage extends StatelessWidget {
 
             const SizedBox(height: 10),
 
+            // Logout yang sudah terhubung ke Supabase
             ProfileLogoutButton(
-              onTap: () {
-                userAktif = null;
-
-                Navigator.pushReplacementNamed(
-                  context,
-                  '/login',
-                );
+              onTap: () async {
+                // Proses keluar dari Supabase
+                await Supabase.instance.client.auth.signOut();
+                
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, '/login');
+                }
               },
             ),
 

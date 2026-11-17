@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web/web.dart' as web;
-
-import '../config/maps_config.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WisataMap extends StatelessWidget {
   final String namaWisata;
@@ -15,28 +13,29 @@ class WisataMap extends StatelessWidget {
     required this.longitude,
   });
 
+  Future<void> _bukaPeta(BuildContext context) async {
+    final uri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': '$latitude,$longitude',
+    });
+
+    final berhasil = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!berhasil && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tidak dapat membuka aplikasi peta.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final apiKey = googleMapsApiKey.trim();
-    final url = apiKey.isNotEmpty
-        ? Uri.https('www.google.com', '/maps/embed/v1/place', {
-            'key': apiKey,
-            'q': '$latitude,$longitude',
-            'center': '$latitude,$longitude',
-            'zoom': '12',
-            'maptype': 'roadmap',
-            'language': 'id',
-            'region': 'ID',
-          })
-        : Uri.https('www.google.com', '/maps', {
-            'q': '$latitude,$longitude',
-            'z': '12',
-            'output': 'embed',
-          });
-
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -48,33 +47,30 @@ class WisataMap extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(17),
-        child: SizedBox(
-          height: 280,
-          width: double.infinity,
-          child: HtmlElementView.fromTagName(
-            tagName: 'iframe',
-            onElementCreated: (Object element) {
-              final iframe = element as web.HTMLIFrameElement;
-
-              iframe.src = url.toString();
-
-              iframe.style.width = '100%';
-              iframe.style.height = '100%';
-              iframe.style.border = '0';
-
-              iframe.setAttribute('allowfullscreen', 'true');
-
-              iframe.setAttribute('loading', 'lazy');
-
-              iframe.setAttribute(
-                'referrerpolicy',
-                'strict-origin-when-cross-origin',
-              );
-            },
+      child: Column(
+        children: [
+          const Icon(Icons.location_on, size: 38, color: Color(0xFF3A5EE0)),
+          const SizedBox(height: 8),
+          Text(
+            namaWisata,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
-        ),
+          const SizedBox(height: 4),
+          Text(
+            '${latitude.toStringAsFixed(5)}, ${longitude.toStringAsFixed(5)}',
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _bukaPeta(context),
+              icon: const Icon(Icons.map_outlined),
+              label: const Text('Buka di Google Maps'),
+            ),
+          ),
+        ],
       ),
     );
   }
