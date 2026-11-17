@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '/models/wisata.dart';
-import 'wisata_image.dart';
+
+import '../models/wisata.dart';
 
 class ExploreBanner extends StatelessWidget {
   final Wisata wisata;
@@ -18,18 +18,21 @@ class ExploreBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ImageProvider gambar = wisata.gambarDariInternet
+        ? NetworkImage(wisata.gambar)
+        : AssetImage(wisata.gambar);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 200,
+        height: 210,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           image: DecorationImage(
-                  image: wisata.gambarDariInternet
-                      ? NetworkImage(wisata.gambar)
-                      : AssetImage(wisata.gambar) as ImageProvider,
-                  fit: BoxFit.cover,
-                ),
+            image: gambar,
+            fit: BoxFit.cover,
+          ),
         ),
         child: Container(
           decoration: BoxDecoration(
@@ -47,31 +50,50 @@ class ExploreBanner extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                top: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: onFavorite,
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      isFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : Colors.grey,
-                      size: 20,
+                top: 14,
+                left: 14,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'DESTINASI PILIHAN',
+                    style: TextStyle(
+                      color: Color(0xFF1565C0),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
+
               Positioned(
-                left: 0,
-                right: 45,
-                bottom: 0,
+                top: 10,
+                right: 10,
+                child: Material(
+                  color: Colors.white.withOpacity(0.9),
+                  shape: const CircleBorder(),
+                  child: IconButton(
+                    onPressed: onFavorite,
+                    icon: Icon(
+                      isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ),
+
+              Positioned(
+                left: 18,
+                right: 18,
+                bottom: 18,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -81,43 +103,48 @@ class ExploreBanner extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 5),
+
+                    const SizedBox(height: 7),
+
                     Row(
                       children: [
                         const Icon(
                           Icons.location_on,
-                          color: Colors.white70,
-                          size: 15,
+                          color: Colors.white,
+                          size: 16,
                         ),
-                        const SizedBox(width: 3),
+
+                        const SizedBox(width: 4),
+
                         Expanded(
                           child: Text(
                             wisata.lokasi,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
+                              color: Colors.white,
+                              fontSize: 13,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10),
+
                         const Icon(
                           Icons.star,
                           color: Colors.amber,
-                          size: 16,
+                          size: 17,
                         ),
-                        const SizedBox(width: 3),
+
+                        const SizedBox(width: 4),
+
                         Text(
-                          wisata.rating,
+                          wisata.rating.toString(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
                           ),
                         ),
                       ],
