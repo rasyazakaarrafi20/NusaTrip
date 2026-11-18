@@ -11,6 +11,7 @@ import '../services/wisata_service.dart';
 import '../widgets/category_section.dart';
 import '../widgets/destination_card.dart';
 import '../widgets/explore_banner.dart';
+import 'search_page.dart';
 
 import 'detail_wisata.dart';
 import 'profile_page.dart';
@@ -287,20 +288,39 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 18),
 
               // PENCARIAN DESTINASI
-              TextField(
-                onChanged: (value) {
-                  setState(() {
-                    search = value;
-                  });
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SearchPage()),
+                  );
                 },
-                decoration: InputDecoration(
-                  hintText: 'Cari destinasi...',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.search, color: Colors.grey),
+                      SizedBox(width: 10),
+                      Text(
+                        'Cari destinasi...',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    ],
                   ),
                 ),
               ),
