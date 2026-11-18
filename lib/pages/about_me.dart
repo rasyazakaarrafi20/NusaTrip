@@ -39,7 +39,7 @@ class AboutMe extends StatelessWidget {
       'nim': '25051204415',
       'role': 'UI/UX & Frontend',
       'instagram': 'nzf.nilaa__',
-      'image': '',
+      'image': 'assets/images/foto_nila.jpeg',
     },
   ];
 
