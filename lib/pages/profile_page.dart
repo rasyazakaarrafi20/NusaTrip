@@ -1,34 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'about_me.dart';
 import 'account_page.dart';
 import 'favorite_page.dart';
 import 'trip_page.dart';
 
+import '../fungsi/favorite_data.dart';
+import '../fungsi/review_data.dart';
+import '../fungsi/user_data.dart';
+
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_item.dart';
 import '../widgets/profile_logout_button.dart';
-
-import '../fungsi/favorite_data.dart';
-import '../fungsi/review_data.dart';
-
 import '../widgets/profile_stats.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // 1. Mengambil data user yang sedang login dari Supabase
-    final user = Supabase.instance.client.auth.currentUser;
+  State<ProfilePage> createState() => _ProfilePageState();
+}
 
-    // 2. Mengambil nama dari metadata (yang disimpan saat register)
+class _ProfilePageState extends State<ProfilePage> {
+  Future<void> _bukaAkun() async {
+    final hasil = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AccountPage(),
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (hasil == true) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const biru = Color(0xFF2563EB);
+
+    final user = Supabase.instance.client.auth.currentUser;
     final namaUser = user?.userMetadata?['full_name'] ?? 'Pengguna NusaTrip';
     final emailUser = user?.email ?? '-';
 
-    // 3. Menghitung jumlah review (mencocokkan ID Supabase dengan data lokal)
-    // Jika kamu belum memigrasi review ke Supabase, ini akan menghitung berdasarkan ID string
     final jumlahReview = user == null
         ? 0
         : reviewData
@@ -36,27 +53,25 @@ class ProfilePage extends StatelessWidget {
             .length;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2563EB),
+        backgroundColor: biru,
         foregroundColor: Colors.white,
         title: const Text(
           'Profile',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             const SizedBox(height: 20),
 
-            // Tampilkan Nama dan Email dari Supabase
             ProfileHeader(
               nama: namaUser,
               email: emailUser,
+              fotoProfil: userAktif?.fotoProfil,
             ),
 
             const SizedBox(height: 25),
@@ -85,7 +100,7 @@ class ProfilePage extends StatelessWidget {
 
             ProfileMenuItem(
               icon: Icons.calendar_month,
-              iconColor: const Color(0xFF2563EB),
+              iconColor: biru,
               title: 'Rencana Perjalanan',
               subtitle: 'Lihat dan kelola perjalanan',
               onTap: () {
@@ -100,17 +115,10 @@ class ProfilePage extends StatelessWidget {
 
             ProfileMenuItem(
               icon: Icons.person,
-              iconColor: const Color(0xFF2563EB),
+              iconColor: biru,
               title: 'Akun',
-              subtitle: 'Informasi akun',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AccountPage(),
-                  ),
-                );
-              },
+              subtitle: 'Ubah nama, email, dan foto profil',
+              onTap: _bukaAkun,
             ),
 
             ProfileMenuItem(
@@ -130,12 +138,10 @@ class ProfilePage extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // Logout yang sudah terhubung ke Supabase
             ProfileLogoutButton(
               onTap: () async {
-                // Proses keluar dari Supabase
                 await Supabase.instance.client.auth.signOut();
-                
+
                 if (context.mounted) {
                   Navigator.pushReplacementNamed(context, '/login');
                 }
