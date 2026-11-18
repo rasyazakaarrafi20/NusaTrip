@@ -21,6 +21,9 @@ class _AccountPageState extends State<AccountPage> {
   final ImagePicker _picker = ImagePicker();
 
   Uint8List? _fotoBaru;
+  String? _fotoUrlLama;
+  String? _fotoMimeType;
+
   bool _sedangMemilihFoto = false;
   bool _sedangMenyimpan = false;
 
@@ -35,7 +38,9 @@ class _AccountPageState extends State<AccountPage> {
 
     _emailController.text = user?.email ?? '';
 
-    _fotoBaru = userAktif?.fotoProfil;
+    _fotoUrlLama =
+        user?.userMetadata?['avatar_url']?.toString();
+
   }
 
   Future<void> _pilihFoto() async {
@@ -55,6 +60,7 @@ class _AccountPageState extends State<AccountPage> {
 
         setState(() {
           _fotoBaru = bytes;
+          _fotoMimeType = foto.mimeType ?? 'image/jpeg';
         });
       }
     } catch (e) {
@@ -70,6 +76,39 @@ class _AccountPageState extends State<AccountPage> {
         setState(() => _sedangMemilihFoto = false);
       }
     }
+  }
+
+  Future<String?> _unggahFoto(User user) async {
+    if (_fotoBaru == null) return null;
+
+    final supabase = Supabase.instance.client;
+
+    final mimeType = _fotoMimeType ?? 'image/jpeg';
+
+    final extension = switch (mimeType) {
+      'image/png' => 'png',
+      'image/webp' => 'webp',
+      'image/gif' => 'gif',
+      _ => 'jpg',
+    };
+
+    final path = '${user.id}/avatar.$extension';
+
+    await supabase.storage.from('avatars').uploadBinary(
+      path,
+      _fotoBaru!,
+      fileOptions: FileOptions(
+        cacheControl: '0',
+        upsert: true,
+        contentType: mimeType,
+      ),
+    );
+
+    final publicUrl =
+        supabase.storage.from('avatars').getPublicUrl(path);
+
+    // Cache buster agar foto terbaru langsung tampil.
+    return '$publicUrl?t=${DateTime.now().millisecondsSinceEpoch}';
   }
 
   Future<void> _simpanPerubahan() async {
@@ -93,11 +132,22 @@ class _AccountPageState extends State<AccountPage> {
     setState(() => _sedangMenyimpan = true);
 
     try {
+      // Upload foto hanya jika pengguna memilih foto baru.
+      final fotoUrlBaru = await _unggahFoto(user);
+
+      // Pertahankan metadata lain yang sudah tersimpan.
+      final metadata = <String, dynamic>{
+        ...?user.userMetadata,
+        'full_name': namaBaru,
+      };
+
+      if (fotoUrlBaru != null) {
+        metadata['avatar_url'] = fotoUrlBaru;
+      }
+
       await supabase.auth.updateUser(
         UserAttributes(
-          data: {
-            'full_name': namaBaru,
-          },
+          data: metadata,
           email: emailBaru != user.email ? emailBaru : null,
         ),
       );
@@ -106,7 +156,10 @@ class _AccountPageState extends State<AccountPage> {
       if (userAktif != null) {
         userAktif!.nama = namaBaru;
         userAktif!.email = emailBaru;
-        userAktif!.fotoProfil = _fotoBaru;
+
+        if (_fotoBaru != null) {
+          userAktif!.fotoProfil = _fotoBaru;
+        }
       }
 
       if (!mounted) return;
@@ -129,6 +182,15 @@ class _AccountPageState extends State<AccountPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Gagal memperbarui profil: ${e.message}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } on StorageException catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal mengunggah foto: ${e.message}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -159,6 +221,18 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     const biru = Color(0xFF2563EB);
 
+    final fotoLokalLama = userAktif?.fotoProfil;
+
+    ImageProvider? gambarProfil;
+
+    if (_fotoBaru != null) {
+      gambarProfil = MemoryImage(_fotoBaru!);
+    } else if (_fotoUrlLama != null && _fotoUrlLama!.isNotEmpty) {
+      gambarProfil = NetworkImage(_fotoUrlLama!);
+    } else if (fotoLokalLama != null) {
+      gambarProfil = MemoryImage(fotoLokalLama);
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -187,10 +261,8 @@ class _AccountPageState extends State<AccountPage> {
                         CircleAvatar(
                           radius: 55,
                           backgroundColor: biru,
-                          backgroundImage: _fotoBaru != null
-                              ? MemoryImage(_fotoBaru!)
-                              : null,
-                          child: _fotoBaru == null
+                          backgroundImage: gambarProfil,
+                          child: gambarProfil == null
                               ? const Icon(
                                   Icons.person,
                                   size: 60,
@@ -202,7 +274,7 @@ class _AccountPageState extends State<AccountPage> {
                           bottom: 0,
                           right: 0,
                           child: InkWell(
-                            onTap: _sedangMemilihFoto
+                            onTap: _sedangMemilihFoto || _sedangMenyimpan
                                 ? null
                                 : _pilihFoto,
                             child: CircleAvatar(
@@ -229,7 +301,7 @@ class _AccountPageState extends State<AccountPage> {
                     ),
                     const SizedBox(height: 12),
                     TextButton.icon(
-                      onPressed: _sedangMemilihFoto
+                      onPressed: _sedangMemilihFoto || _sedangMenyimpan
                           ? null
                           : _pilihFoto,
                       icon: const Icon(Icons.image_outlined),

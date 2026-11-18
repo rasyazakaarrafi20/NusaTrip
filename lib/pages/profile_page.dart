@@ -69,8 +69,9 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 20),
 
             ProfileHeader(
-              nama: namaUser,
+              nama: namaUser.toString(),
               email: emailUser,
+              fotoProfilUrl: user?.userMetadata?['avatar_url']?.toString(),
               fotoProfil: userAktif?.fotoProfil,
             ),
 
