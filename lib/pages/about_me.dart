@@ -4,46 +4,44 @@ import 'package:url_launcher/url_launcher.dart';
 class AboutMe extends StatelessWidget {
   const AboutMe({super.key});
 
-  // --- DATA ANGGOTA KELOMPOK 3 (SUDAH 5 ORANG) ---
-  static const List<Map<String, String>> teamMembers = [
+  static const List<Map<String, dynamic>> teamMembers = [
     {
       'name': 'Rasya Zaka Arrafi',
       'nim': '25051204419',
-      'role': 'Project Owner / Lead Developer',
-      'instagram': 'rrafie_20',
+      'role': 'BACKEND & API INTEGRATION',
+      'instagram': 'rrafie.20',
       'image': 'assets/images/fotogua.jpeg',
     },
     {
       'name': 'Dea Apriani Agustin',
       'nim': '25051204387',
-      'role': 'UI/UX & Frontend',
-      'instagram': 'deeaayya',
+      'role': 'DATABASE & AUTH',
+      'instagram': 'deaaayya',
       'image': 'assets/images/foto_dea.jpg',
-    },
-    {
-      'name': 'Fauzan Ramdhani Fajri',
-      'nim': '25051204400',
-      'role': 'UI/UX & Frontend',
-      'instagram': 'fau.zanrf',
-      'image': 'assets/images/foto_fauzan.jpg',
     },
     {
       'name': 'Aghnia Khairi Faza Maverika',
       'nim': '25051204404',
-      'role': 'UI/UX & Frontend',
+      'role': 'UI/UX DESIGNER',
       'instagram': 'aniiarchivee',
       'image': 'assets/images/foto_aghnia.jpeg',
     },
     {
       'name': 'Nila Nazatul Fafa',
       'nim': '25051204415',
-      'role': 'UI/UX & Frontend',
+      'role': 'FRONTEND DEVELOPER & QA',
       'instagram': 'nzf.nilaa__',
-      'image': 'assets/images/foto_nila.jpeg',
+      'image': 'assets/images/foto_nila.jpeg', 
+    },
+    {
+      'name': 'Fauzan Ramdhani Fajri',
+      'nim': '25051204400',
+      'role': 'FRONTEND DEVELOPER & QA',
+      'instagram': 'fau.zanrf',
+      'image': 'assets/images/foto_fauzan.jpg',
     },
   ];
 
-  // Fungsi buka Instagram
   Future<void> _launchInstagram(BuildContext context, String username) async {
     final Uri url = Uri.parse('https://instagram.com/$username');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -67,254 +65,308 @@ class AboutMe extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // --- LOGIKA RESPONSIF UKURAN KARTU ---
-          double maxWidth = constraints.maxWidth;
-          double cardWidth = maxWidth - 40; // Default HP (1 kolom)
-          double padding = 20.0;
-
-          if (maxWidth > 1024) {
-            // Laptop (3 kolom)
-            padding = 32.0;
-            // Lebar maksimal 1100, dibagi 3, dikurangi jarak antar kartu (16x2)
-            cardWidth =
-                ((maxWidth > 1100 ? 1100 : maxWidth) - (padding * 2) - 32) / 3;
-          } else if (maxWidth >= 600) {
-            // Tablet (2 kolom)
-            padding = 24.0;
-            cardWidth = (maxWidth - (padding * 2) - 16) / 2;
-          }
-
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1100),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(padding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // --- HEADER ABOUT US ---
-                    Center(
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.travel_explore,
-                            size: 80,
-                            color: Color(0xFF2563EB),
-                          ),
-                          const SizedBox(height: 15),
-                          const Text(
-                            'Tim NusaTrip',
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          const Text(
-                            'Kelompok 3',
-                            style: TextStyle(
-                              color: Color(0xFF2563EB),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Kami adalah tim developer di balik aplikasi eksplorasi wisata Indonesia.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // --- TENTANG APLIKASI ---
-                    const Text(
-                      'Tentang NusaTrip',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'NusaTrip adalah aplikasi eksplorasi destinasi '
-                      'wisata Indonesia. Pengguna dapat mencari dan '
-                      'melihat berbagai destinasi wisata yang tersedia. '
-                      'Aplikasi ini dibuat untuk memenuhi tugas mata kuliah PBP.',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey,
-                        height: 1.5,
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // --- TEKNOLOGI ---
-                    const Text(
-                      'Teknologi',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: [
-                        _buildTechChip('Flutter', Icons.flutter_dash),
-                        _buildTechChip('Dart', Icons.code),
-                        _buildTechChip('Cloudflare', Icons.cloud),
-                      ],
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // --- TIM DEVELOPER (MENGGUNAKAN WRAP AGAR KE TENGAH) ---
-                    const Text(
-                      'Tim Developer',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-
-                    Wrap(
-                      spacing: 16, // Jarak horizontal antar kartu
-                      runSpacing: 16, // Jarak vertikal antar baris
-                      alignment: WrapAlignment
-                          .center, // KUNCI: Agar sisa 1 kartu ke tengah
-                      children: teamMembers.map((member) {
-                        return SizedBox(
-                          width: cardWidth, // Lebar dinamis
-                          height:
-                              275, // KUNCI: Tinggi dikunci agar tidak overflow
-                          child: _buildMemberCard(context, member),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 30),
-                  ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2563EB), Color(0xFF60A5FA)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF2563EB).withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  // --- WIDGET KARTU ANGGOTA ---
-  Widget _buildMemberCard(BuildContext context, Map<String, String> member) {
-    final bool hasImage = member['image']!.isNotEmpty;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // FOTO PROFIL
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: const Color(0xFF2563EB).withOpacity(0.1),
-            child: hasImage
-                ? ClipOval(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
                     child: Image.asset(
-                      member['image']!,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
+                      'assets/images/logo_nusatrip.png',
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                         return const Icon(
-                          Icons.person,
-                          size: 45,
+                          Icons.travel_explore,
+                          size: 50,
                           color: Color(0xFF2563EB),
                         );
                       },
                     ),
-                  )
-                : const Icon(Icons.person, size: 45, color: Color(0xFF2563EB)),
-          ),
-          const SizedBox(height: 12),
-
-          // NAMA
-          Text(
-            member['name']!,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          // NIM
-          Text(
-            'NIM: ${member['nim']}',
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-          const SizedBox(height: 8),
-
-          // PERAN
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2563EB).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              member['role']!,
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xFF2563EB),
-                fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Tim NusaTrip',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Kelompok 3',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Kami adalah tim developer di balik aplikasi eksplorasi wisata Indonesia. NusaTrip dibuat untuk memenuhi tugas mata kuliah PBP.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Teknologi yang Digunakan',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF111A3A),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildTechChip('Flutter', Icons.flutter_dash),
+                _buildTechChip('Dart', Icons.code),
+                _buildTechChip('Cloudflare', Icons.cloud),
+                _buildTechChip('Supabase', Icons.storage),
+              ],
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Fitur Utama',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF111A3A),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  _buildFeatureItem(Icons.explore, 'Eksplorasi Wisata', 'Menemukan destinasi populer di seluruh Indonesia.'),
+                  const Divider(height: 24),
+                  _buildFeatureItem(Icons.calendar_month, 'Rencana Perjalanan', 'Mencatat dan menyimpan jadwal liburan dengan mudah.'),
+                  const Divider(height: 24),
+                  _buildFeatureItem(Icons.favorite, 'Daftar Favorit', 'Menyimpan tempat wisata impian dalam satu klik.'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Tim Developer',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF111A3A),
+              ),
+            ),
+            const SizedBox(height: 12),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: teamMembers.length,
+              itemBuilder: (context, index) {
+                final member = teamMembers[index];
+                return _buildTeamCard(context, member);
+              },
+            ),
+            const SizedBox(height: 20),
+            const Center(
+              child: Text(
+                'NusaTrip v1.0.0 • Tugas Mata Kuliah PBP 2026',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTeamCard(BuildContext context, Map<String, dynamic> member) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      height: 140,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEBF3FF),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: const Color(0xFF2563EB).withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            right: 110,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        member['role'],
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.2,
+                          color: Color(0xFF2563EB),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        member['name'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF111A3A),
+                          height: 1.2,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'NIM: ${member['nim']}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF4B5675),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () => _launchInstagram(context, member['instagram']),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.camera_alt,
+                                size: 12,
+                                color: Color(0xFFE1306C),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '@${member['instagram']}',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF111A3A),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-
-          const Spacer(),
-
-          // TOMBOL INSTAGRAM
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => _launchInstagram(context, member['instagram']!),
-              icon: const Icon(Icons.camera_alt_outlined, size: 16),
-              label: const Text('Instagram', style: TextStyle(fontSize: 12)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(19),
+                topLeft: Radius.circular(20),
+              ),
+              child: Image.asset(
+                member['image'],
+                width: 110,
+                height: 140,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 110,
+                    height: 140,
+                    color: const Color(0xFF2563EB).withOpacity(0.1),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.broken_image, size: 30, color: Color(0xFF2563EB)),
+                        SizedBox(height: 4),
+                        Text(
+                          'Foto tidak ada',
+                          style: TextStyle(fontSize: 9, color: Color(0xFF2563EB)),
+                          textAlign: TextAlign.center,
+                        )
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -323,7 +375,6 @@ class AboutMe extends StatelessWidget {
     );
   }
 
-  // --- WIDGET CHIP TEKNOLOGI ---
   Widget _buildTechChip(String label, IconData icon) {
     return Chip(
       avatar: Icon(icon, size: 16, color: const Color(0xFF2563EB)),
@@ -334,7 +385,46 @@ class AboutMe extends StatelessWidget {
       labelStyle: const TextStyle(
         fontWeight: FontWeight.w600,
         color: Color(0xFF2563EB),
+        fontSize: 12,
       ),
+    );
+  }
+
+  Widget _buildFeatureItem(IconData icon, String title, String subtitle) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2563EB).withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: const Color(0xFF2563EB), size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Color(0xFF111A3A),
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF4B5675),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

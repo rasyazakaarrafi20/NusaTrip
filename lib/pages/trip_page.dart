@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../fungsi/trip_data.dart';
 import '../models/trip_plan.dart';
+import 'profile_page.dart';
 
 class TripPage extends StatefulWidget {
   final bool sebagaiRiwayat;
@@ -72,6 +73,7 @@ class _TripPageState extends State<TripPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
       appBar: AppBar(
+        automaticallyImplyLeading: !widget.sebagaiRiwayat,
         title: Text(
           widget.sebagaiRiwayat
               ? 'Riwayat Perjalanan'
@@ -80,6 +82,31 @@ class _TripPageState extends State<TripPage> {
         ),
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
+        elevation: 0,
+        actions: widget.sebagaiRiwayat
+            ? [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfilePage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.person_outline, color: Colors.white),
+                  label: const Text(
+                    'Profil',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ]
+            : null,
       ),
       body: daftarTrip.isEmpty
           ? Center(

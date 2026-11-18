@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:fluttermoji/fluttermoji.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../fungsi/user_data.dart';
@@ -23,6 +24,7 @@ class _AccountPageState extends State<AccountPage> {
   Uint8List? _fotoBaru;
   String? _fotoUrlLama;
   String? _fotoMimeType;
+  bool _gunakanFluttermoji = false;
 
   bool _sedangMemilihFoto = false;
   bool _sedangMenyimpan = false;
@@ -40,6 +42,7 @@ class _AccountPageState extends State<AccountPage> {
 
     _fotoUrlLama =
         user?.userMetadata?['avatar_url']?.toString();
+    _gunakanFluttermoji = user?.userMetadata?['avatar_mode'] == 'fluttermoji';
 
   }
 
@@ -61,6 +64,7 @@ class _AccountPageState extends State<AccountPage> {
         setState(() {
           _fotoBaru = bytes;
           _fotoMimeType = foto.mimeType ?? 'image/jpeg';
+          _gunakanFluttermoji = false;
         });
       }
     } catch (e) {
@@ -75,6 +79,19 @@ class _AccountPageState extends State<AccountPage> {
       if (mounted) {
         setState(() => _sedangMemilihFoto = false);
       }
+    }
+  }
+
+  Future<void> _buatAvatar() async {
+    final selesai = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const _FluttermojiEditorPage()),
+    );
+    if (selesai == true && mounted) {
+      setState(() {
+        _gunakanFluttermoji = true;
+        _fotoBaru = null;
+      });
     }
   }
 
@@ -144,6 +161,7 @@ class _AccountPageState extends State<AccountPage> {
       if (fotoUrlBaru != null) {
         metadata['avatar_url'] = fotoUrlBaru;
       }
+      metadata['avatar_mode'] = _gunakanFluttermoji ? 'fluttermoji' : 'photo';
 
       await supabase.auth.updateUser(
         UserAttributes(
@@ -225,7 +243,9 @@ class _AccountPageState extends State<AccountPage> {
 
     ImageProvider? gambarProfil;
 
-    if (_fotoBaru != null) {
+    if (_gunakanFluttermoji) {
+      gambarProfil = null;
+    } else if (_fotoBaru != null) {
       gambarProfil = MemoryImage(_fotoBaru!);
     } else if (_fotoUrlLama != null && _fotoUrlLama!.isNotEmpty) {
       gambarProfil = NetworkImage(_fotoUrlLama!);
@@ -258,18 +278,16 @@ class _AccountPageState extends State<AccountPage> {
                   children: [
                     Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 55,
-                          backgroundColor: biru,
-                          backgroundImage: gambarProfil,
-                          child: gambarProfil == null
-                              ? const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Colors.white,
-                                )
-                              : null,
-                        ),
+                        _gunakanFluttermoji
+                            ? FluttermojiCircleAvatar(radius: 55)
+                            : CircleAvatar(
+                                radius: 55,
+                                backgroundColor: biru,
+                                backgroundImage: gambarProfil,
+                                child: gambarProfil == null
+                                    ? const Icon(Icons.person, size: 60, color: Colors.white)
+                                    : null,
+                              ),
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -308,6 +326,15 @@ class _AccountPageState extends State<AccountPage> {
                       label: const Text('Ganti Foto Profil'),
                     ),
                   ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+              Center(
+                child: OutlinedButton.icon(
+                  onPressed: _sedangMenyimpan ? null : _buatAvatar,
+                  icon: const Icon(Icons.face_retouching_natural),
+                  label: const Text('Buat / ubah avatar'),
                 ),
               ),
 
@@ -454,6 +481,35 @@ class _AccountPageState extends State<AccountPage> {
         borderSide: const BorderSide(
           color: Color(0xFF2563EB),
           width: 1.5,
+        ),
+      ),
+    );
+  }
+}
+
+class _FluttermojiEditorPage extends StatelessWidget {
+  const _FluttermojiEditorPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Buat Avatar'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Selesai'),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 12),
+            FluttermojiCircleAvatar(radius: 55),
+            SizedBox(height: 12),
+            Expanded(child: FluttermojiCustomizer()),
+          ],
         ),
       ),
     );

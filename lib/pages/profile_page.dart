@@ -73,6 +73,8 @@ class _ProfilePageState extends State<ProfilePage> {
               email: emailUser,
               fotoProfilUrl: user?.userMetadata?['avatar_url']?.toString(),
               fotoProfil: userAktif?.fotoProfil,
+              gunakanFluttermoji:
+                  user?.userMetadata?['avatar_mode'] == 'fluttermoji',
             ),
 
             const SizedBox(height: 25),
