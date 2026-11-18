@@ -96,7 +96,7 @@ class FavoritePageState extends State<FavoritePage> {
                     crossAxisCount: crossAxisCount,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    mainAxisExtent: crossAxisCount == 1 ? 220 : 280,
+                    mainAxisExtent: 230,
                   ),
                   itemBuilder: (context, index) {
                     final tempat = daftarFavorit[index];
@@ -153,7 +153,7 @@ class FavoritePageState extends State<FavoritePage> {
                                           Text(
                                             tempat.nama,
                                             style: const TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                               color: Color(0xFF111A3A),
                                             ),
@@ -192,6 +192,8 @@ class FavoritePageState extends State<FavoritePage> {
                                         Icons.favorite,
                                         color: Colors.red,
                                       ),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
                                     ),
                                   ],
                                 ),
