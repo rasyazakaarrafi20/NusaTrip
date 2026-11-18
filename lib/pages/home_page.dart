@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import '../widgets/category_section.dart';
 import '../widgets/destination_card.dart';
 import '../widgets/explore_banner.dart';
 import 'search_page.dart';
-
 import 'detail_wisata.dart';
 import 'profile_page.dart';
 import 'trip_page.dart';
@@ -46,22 +46,25 @@ class _HomePageState extends State<HomePage> {
 
     _bannerController = PageController();
 
-    // Banner berganti otomatis setiap 4 detik.
-    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (!mounted ||
-          !_bannerController.hasClients ||
-          _destinasiTerbaik.length <= 1) {
-        return;
-      }
+    _bannerTimer = Timer.periodic(
+      const Duration(seconds: 4),
+      (timer) {
+        if (!mounted ||
+            !_bannerController.hasClients ||
+            _destinasiTerbaik.length <= 1) {
+          return;
+        }
 
-      final nextIndex = (_bannerIndex + 1) % _destinasiTerbaik.length;
+        final nextIndex =
+            (_bannerIndex + 1) % _destinasiTerbaik.length;
 
-      _bannerController.animateToPage(
-        nextIndex,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    });
+        _bannerController.animateToPage(
+          nextIndex,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      },
+    );
 
     _muatData();
   }
@@ -73,11 +76,12 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // Membuka halaman detail wisata.
   void _bukaDetail(Wisata tempat) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DetailWisata(wisata: tempat)),
+      MaterialPageRoute(
+        builder: (context) => DetailWisata(wisata: tempat),
+      ),
     ).then((_) {
       if (mounted) {
         setState(() {});
@@ -85,7 +89,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Mengubah status favorit wisata.
   void _ubahFavorit(Wisata tempat) {
     setState(() {
       if (FavoriteData.cekFavorit(tempat)) {
@@ -96,7 +99,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Mengambil data destinasi dan kategori.
   Future<void> _muatData() async {
     if (mounted) {
       setState(() {
@@ -106,9 +108,9 @@ class _HomePageState extends State<HomePage> {
 
     bool fallback = false;
 
-    // Mengambil destinasi dari API.
     try {
-      final hasilWisata = await WisataService().ambilDestinasi();
+      final hasilWisata =
+          await WisataService().ambilDestinasi();
 
       debugPrint('========== DAFTAR DESTINASI API ==========');
 
@@ -134,13 +136,18 @@ class _HomePageState extends State<HomePage> {
       fallback = true;
     }
 
-    // Mengambil kategori dari API.
     try {
-      final hasilKategori = await KategoriService().ambilKategori();
+      final hasilKategori =
+          await KategoriService().ambilKategori();
 
       if (hasilKategori.isNotEmpty) {
         _daftarKategori = [
-          Kategori(id: 0, nama: 'Semua', icon: Icons.apps, slug: 'semua'),
+          Kategori(
+            id: 0,
+            nama: 'Semua',
+            icon: Icons.apps,
+            slug: 'semua',
+          ),
           ...hasilKategori,
         ];
       } else {
@@ -179,23 +186,41 @@ class _HomePageState extends State<HomePage> {
     _destinasiTerbaik = salinan.take(5).toList();
   }
 
-  // Kategori cadangan jika API tidak tersedia.
   List<Kategori> _kategoriFallback() {
     return [
-      Kategori(id: 0, nama: 'Semua', icon: Icons.apps, slug: 'semua'),
-      Kategori(id: 1, nama: 'Alam', icon: Icons.park, slug: 'alam'),
+      Kategori(
+        id: 0,
+        nama: 'Semua',
+        icon: Icons.apps,
+        slug: 'semua',
+      ),
+      Kategori(
+        id: 1,
+        nama: 'Alam',
+        icon: Icons.park,
+        slug: 'alam',
+      ),
       Kategori(
         id: 2,
         nama: 'Budaya',
         icon: Icons.temple_buddhist,
         slug: 'budaya',
       ),
-      Kategori(id: 3, nama: 'Pantai', icon: Icons.beach_access, slug: 'pantai'),
-      Kategori(id: 4, nama: 'Gunung', icon: Icons.terrain, slug: 'gunung'),
+      Kategori(
+        id: 3,
+        nama: 'Pantai',
+        icon: Icons.beach_access,
+        slug: 'pantai',
+      ),
+      Kategori(
+        id: 4,
+        nama: 'Gunung',
+        icon: Icons.terrain,
+        slug: 'gunung',
+      ),
     ];
   }
 
-  // Memfilter destinasi berdasarkan pencarian dan kategori.
   List<Wisata> get _hasilPencarian {
     return _daftarWisata.where((tempat) {
       final kataKunci = search.toLowerCase().trim();
@@ -217,7 +242,8 @@ class _HomePageState extends State<HomePage> {
         });
 
         if (tempat.daftarKategori.isEmpty) {
-          cocokKategori = tempat.kategori.toLowerCase() == kategoriDicari;
+          cocokKategori =
+              tempat.kategori.toLowerCase() == kategoriDicari;
         }
       }
 
@@ -230,32 +256,50 @@ class _HomePageState extends State<HomePage> {
     final hasilPencarian = _hasilPencarian;
     final lebarLayar = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FF),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
+    final appBarBackground =
+        theme.appBarTheme.backgroundColor ?? colors.primary;
+
+    final appBarForeground =
+        theme.appBarTheme.foregroundColor ?? colors.onPrimary;
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
+        backgroundColor: appBarBackground,
+        foregroundColor: appBarForeground,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'NusaTrip',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: appBarForeground,
+          ),
         ),
-
         actions: [
           TextButton.icon(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                MaterialPageRoute(
+                  builder: (context) => const ProfilePage(),
+                ),
               );
             },
-            icon: const Icon(Icons.person_outline, color: Colors.white),
-            label: const Text(
+            style: TextButton.styleFrom(
+              foregroundColor: appBarForeground,
+            ),
+            icon: Icon(
+              Icons.person_outline,
+              color: appBarForeground,
+            ),
+            label: Text(
               'Profil',
               style: TextStyle(
-                color: Colors.white,
+                color: appBarForeground,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),
@@ -264,7 +308,6 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 10),
         ],
       ),
-
       body: RefreshIndicator(
         onRefresh: _muatData,
         child: SingleChildScrollView(
@@ -273,26 +316,31 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Jelajahi Indonesia 🇮🇩',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
               const SizedBox(height: 5),
 
-              const Text(
+              Text(
                 'Temukan destinasi wisata terbaik di seluruh nusantara.',
-                style: TextStyle(color: Colors.grey, fontSize: 13),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontSize: 13,
+                ),
               ),
 
               const SizedBox(height: 18),
 
-              // PENCARIAN DESTINASI
               InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SearchPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const SearchPage(),
+                    ),
                   );
                 },
                 borderRadius: BorderRadius.circular(30),
@@ -302,7 +350,7 @@ class _HomePageState extends State<HomePage> {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
@@ -312,13 +360,19 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.search, color: Colors.grey),
-                      SizedBox(width: 10),
+                      Icon(
+                        Icons.search,
+                        color: colors.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 10),
                       Text(
                         'Cari destinasi...',
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),
@@ -327,10 +381,11 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 22),
 
-              // BANNER DESTINASI WISATA
-              const Text(
+              Text(
                 'Destinasi Pilihan',
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
               const SizedBox(height: 12),
@@ -352,12 +407,8 @@ class _HomePageState extends State<HomePage> {
                       return ExploreBanner(
                         wisata: tempat,
                         isFavorite: FavoriteData.cekFavorit(tempat),
-                        onTap: () {
-                          _bukaDetail(tempat);
-                        },
-                        onFavorite: () {
-                          _ubahFavorit(tempat);
-                        },
+                        onTap: () => _bukaDetail(tempat),
+                        onFavorite: () => _ubahFavorit(tempat),
                       );
                     },
                   ),
@@ -367,42 +418,45 @@ class _HomePageState extends State<HomePage> {
                   height: 210,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Belum ada destinasi untuk ditampilkan.',
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                    ),
                   ),
                 ),
 
               const SizedBox(height: 12),
 
-              // INDIKATOR BANNER
               if (_destinasiTerbaik.length > 1)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(_destinasiTerbaik.length, (index) {
-                    final aktif = _bannerIndex == index;
+                  children: List.generate(
+                    _destinasiTerbaik.length,
+                    (index) {
+                      final aktif = _bannerIndex == index;
 
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      width: aktif ? 22 : 7,
-                      height: 7,
-                      decoration: BoxDecoration(
-                        color: aktif
-                            ? const Color(0xFF2563EB)
-                            : Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    );
-                  }),
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        width: aktif ? 22 : 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: aktif
+                              ? colors.primary
+                              : colors.outlineVariant,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      );
+                    },
+                  ),
                 ),
 
               const SizedBox(height: 22),
 
-              // KATEGORI BERANDA
               if (_daftarKategori.isNotEmpty)
                 CategorySection(
                   kategoriDipilih: kategoriDipilih,
@@ -415,7 +469,9 @@ class _HomePageState extends State<HomePage> {
                   onTripTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const TripPage()),
+                      MaterialPageRoute(
+                        builder: (context) => const TripPage(),
+                      ),
                     ).then((_) {
                       if (mounted) {
                         setState(() {});
@@ -426,24 +482,29 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 15),
 
-              // DESTINASI POPULER
-              const Text(
+              Text(
                 'Destinasi Populer',
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
               if (_sedangMemuat)
                 const Padding(
                   padding: EdgeInsets.all(40),
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 )
               else if (hasilPencarian.isEmpty)
-                const Center(
+                Center(
                   child: Padding(
-                    padding: EdgeInsets.all(40),
+                    padding: const EdgeInsets.all(40),
                     child: Text(
                       'Destinasi tidak ditemukan',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 )
@@ -452,7 +513,8 @@ class _HomePageState extends State<HomePage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: hasilPencarian.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: lebarLayar > 900
                         ? 4
                         : (lebarLayar > 600 ? 3 : 2),
@@ -464,15 +526,12 @@ class _HomePageState extends State<HomePage> {
                   ),
                   itemBuilder: (context, index) {
                     final tempat = hasilPencarian[index];
+
                     return DestinationCard(
                       wisata: tempat,
                       isFavorite: FavoriteData.cekFavorit(tempat),
-                      onTap: () {
-                        _bukaDetail(tempat);
-                      },
-                      onFavorite: () {
-                        _ubahFavorit(tempat);
-                      },
+                      onTap: () => _bukaDetail(tempat),
+                      onFavorite: () => _ubahFavorit(tempat),
                     );
                   },
                 ),
@@ -482,17 +541,22 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.only(top: 12),
                   child: Text(
                     'Sebagian data API gagal dimuat. Data lokal digunakan sebagai cadangan.',
-                    style: TextStyle(color: Colors.orange, fontSize: 11),
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontSize: 11,
+                    ),
                   ),
                 ),
 
               const SizedBox(height: 25),
 
-              // FOOTER
               Center(
                 child: Text(
                   '© 2026 NusaTrip',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  style: TextStyle(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ],

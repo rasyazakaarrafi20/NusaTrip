@@ -42,8 +42,9 @@ class _AccountPageState extends State<AccountPage> {
 
     _fotoUrlLama =
         user?.userMetadata?['avatar_url']?.toString();
-    _gunakanFluttermoji = user?.userMetadata?['avatar_mode'] == 'fluttermoji';
 
+    _gunakanFluttermoji =
+        user?.userMetadata?['avatar_mode'] == 'fluttermoji';
   }
 
   Future<void> _pilihFoto() async {
@@ -85,8 +86,11 @@ class _AccountPageState extends State<AccountPage> {
   Future<void> _buatAvatar() async {
     final selesai = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) => const _FluttermojiEditorPage()),
+      MaterialPageRoute(
+        builder: (_) => const _FluttermojiEditorPage(),
+      ),
     );
+
     if (selesai == true && mounted) {
       setState(() {
         _gunakanFluttermoji = true;
@@ -99,7 +103,6 @@ class _AccountPageState extends State<AccountPage> {
     if (_fotoBaru == null) return null;
 
     final supabase = Supabase.instance.client;
-
     final mimeType = _fotoMimeType ?? 'image/jpeg';
 
     final extension = switch (mimeType) {
@@ -124,7 +127,6 @@ class _AccountPageState extends State<AccountPage> {
     final publicUrl =
         supabase.storage.from('avatars').getPublicUrl(path);
 
-    // Cache buster agar foto terbaru langsung tampil.
     return '$publicUrl?t=${DateTime.now().millisecondsSinceEpoch}';
   }
 
@@ -135,7 +137,9 @@ class _AccountPageState extends State<AccountPage> {
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Akun tidak ditemukan. Silakan login kembali.'),
+          content: Text(
+            'Akun tidak ditemukan. Silakan login kembali.',
+          ),
         ),
       );
       return;
@@ -149,10 +153,8 @@ class _AccountPageState extends State<AccountPage> {
     setState(() => _sedangMenyimpan = true);
 
     try {
-      // Upload foto hanya jika pengguna memilih foto baru.
       final fotoUrlBaru = await _unggahFoto(user);
 
-      // Pertahankan metadata lain yang sudah tersimpan.
       final metadata = <String, dynamic>{
         ...?user.userMetadata,
         'full_name': namaBaru,
@@ -161,7 +163,9 @@ class _AccountPageState extends State<AccountPage> {
       if (fotoUrlBaru != null) {
         metadata['avatar_url'] = fotoUrlBaru;
       }
-      metadata['avatar_mode'] = _gunakanFluttermoji ? 'fluttermoji' : 'photo';
+
+      metadata['avatar_mode'] =
+          _gunakanFluttermoji ? 'fluttermoji' : 'photo';
 
       await supabase.auth.updateUser(
         UserAttributes(
@@ -170,7 +174,6 @@ class _AccountPageState extends State<AccountPage> {
         ),
       );
 
-      // Sinkronisasi data lokal jika tersedia.
       if (userAktif != null) {
         userAktif!.nama = namaBaru;
         userAktif!.email = emailBaru;
@@ -239,7 +242,24 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     const biru = Color(0xFF2563EB);
 
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     final fotoLokalLama = userAktif?.fotoProfil;
+
+    final appBarBackground =
+        theme.appBarTheme.backgroundColor ?? colors.primary;
+
+    final appBarForeground =
+        theme.appBarTheme.foregroundColor ?? colors.onPrimary;
+
+    final backgroundColor = theme.scaffoldBackgroundColor;
+    final textColor = colors.onSurface;
+
+    final inputFillColor = isDark
+        ? colors.surfaceContainerHighest
+        : Colors.white;
 
     ImageProvider? gambarProfil;
 
@@ -254,14 +274,17 @@ class _AccountPageState extends State<AccountPage> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: biru,
-        foregroundColor: Colors.white,
+        backgroundColor: appBarBackground,
+        foregroundColor: appBarForeground,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Kelola Profil',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: appBarForeground,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -285,14 +308,19 @@ class _AccountPageState extends State<AccountPage> {
                                 backgroundColor: biru,
                                 backgroundImage: gambarProfil,
                                 child: gambarProfil == null
-                                    ? const Icon(Icons.person, size: 60, color: Colors.white)
+                                    ? const Icon(
+                                        Icons.person,
+                                        size: 60,
+                                        color: Colors.white,
+                                      )
                                     : null,
                               ),
                         Positioned(
                           bottom: 0,
                           right: 0,
                           child: InkWell(
-                            onTap: _sedangMemilihFoto || _sedangMenyimpan
+                            onTap: _sedangMemilihFoto ||
+                                    _sedangMenyimpan
                                 ? null
                                 : _pilihFoto,
                             child: CircleAvatar(
@@ -319,7 +347,8 @@ class _AccountPageState extends State<AccountPage> {
                     ),
                     const SizedBox(height: 12),
                     TextButton.icon(
-                      onPressed: _sedangMemilihFoto || _sedangMenyimpan
+                      onPressed: _sedangMemilihFoto ||
+                              _sedangMenyimpan
                           ? null
                           : _pilihFoto,
                       icon: const Icon(Icons.image_outlined),
@@ -330,34 +359,43 @@ class _AccountPageState extends State<AccountPage> {
               ),
 
               const SizedBox(height: 12),
+
               Center(
                 child: OutlinedButton.icon(
-                  onPressed: _sedangMenyimpan ? null : _buatAvatar,
-                  icon: const Icon(Icons.face_retouching_natural),
+                  onPressed:
+                      _sedangMenyimpan ? null : _buatAvatar,
+                  icon: const Icon(
+                    Icons.face_retouching_natural,
+                  ),
                   label: const Text('Buat / ubah avatar'),
                 ),
               ),
 
               const SizedBox(height: 30),
 
-              const Text(
+              Text(
                 'Informasi Pribadi',
-                style: TextStyle(
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: textColor,
                 ),
               ),
 
               const SizedBox(height: 16),
 
-              _buildLabel('Nama Lengkap'),
+              _buildLabel('Nama Lengkap', textColor),
 
               TextFormField(
                 controller: _namaController,
                 textCapitalization: TextCapitalization.words,
+                style: TextStyle(color: textColor),
                 decoration: _inputDecoration(
                   hint: 'Masukkan nama lengkap',
                   icon: Icons.person_outline,
+                  fillColor: inputFillColor,
+                  colors: colors,
+                  isDark: isDark,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -369,14 +407,18 @@ class _AccountPageState extends State<AccountPage> {
 
               const SizedBox(height: 20),
 
-              _buildLabel('Alamat Email'),
+              _buildLabel('Alamat Email', textColor),
 
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                style: TextStyle(color: textColor),
                 decoration: _inputDecoration(
                   hint: 'Masukkan alamat email',
                   icon: Icons.email_outlined,
+                  fillColor: inputFillColor,
+                  colors: colors,
+                  isDark: isDark,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -441,14 +483,15 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Widget _buildLabel(String label) {
+  Widget _buildLabel(String label, Color textColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 14,
+          color: textColor,
         ),
       ),
     );
@@ -457,29 +500,37 @@ class _AccountPageState extends State<AccountPage> {
   InputDecoration _inputDecoration({
     required String hint,
     required IconData icon,
+    required Color fillColor,
+    required ColorScheme colors,
+    required bool isDark,
   }) {
+    final borderColor = colors.outlineVariant;
+
     return InputDecoration(
       hintText: hint,
+      hintStyle: TextStyle(
+        color: colors.onSurfaceVariant,
+      ),
       prefixIcon: Icon(
         icon,
-        color: const Color(0xFF2563EB),
+        color: colors.primary,
       ),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: fillColor,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFFE2E8F0),
+        borderSide: BorderSide(
+          color: borderColor,
         ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFF2563EB),
+        borderSide: BorderSide(
+          color: colors.primary,
           width: 1.5,
         ),
       ),
@@ -492,7 +543,10 @@ class _FluttermojiEditorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Buat Avatar'),
         actions: [
@@ -505,10 +559,12 @@ class _FluttermojiEditorPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             FluttermojiCircleAvatar(radius: 55),
-            SizedBox(height: 12),
-            Expanded(child: FluttermojiCustomizer()),
+            const SizedBox(height: 12),
+            Expanded(
+              child: FluttermojiCustomizer(),
+            ),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,7 +32,7 @@ class AboutMe extends StatelessWidget {
       'nim': '25051204415',
       'role': 'FRONTEND DEVELOPER & QA',
       'instagram': 'nzf.nilaa__',
-      'image': 'assets/images/foto_nila.jpeg', 
+      'image': 'assets/images/foto_nila.jpeg',
     },
     {
       'name': 'Fauzan Ramdhani Fajri',
@@ -42,12 +43,21 @@ class AboutMe extends StatelessWidget {
     },
   ];
 
-  Future<void> _launchInstagram(BuildContext context, String username) async {
+  Future<void> _launchInstagram(
+    BuildContext context,
+    String username,
+  ) async {
     final Uri url = Uri.parse('https://instagram.com/$username');
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal membuka Instagram @$username')),
+          SnackBar(
+            content: Text('Gagal membuka Instagram @$username'),
+          ),
         );
       }
     }
@@ -55,14 +65,27 @@ class AboutMe extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    final appBarBackground =
+        theme.appBarTheme.backgroundColor ?? colors.primary;
+
+    final appBarForeground =
+        theme.appBarTheme.foregroundColor ?? colors.onPrimary;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FF),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
-        title: const Text(
+        backgroundColor: appBarBackground,
+        foregroundColor: appBarForeground,
+        title: Text(
           'About Us',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: appBarForeground,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -70,19 +93,24 @@ class AboutMe extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // HEADER NUSATRIP
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF2563EB), Color(0xFF60A5FA)],
+                  colors: [
+                    Color(0xFF2563EB),
+                    Color(0xFF60A5FA),
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF2563EB).withOpacity(0.3),
+                    color: const Color(0xFF2563EB)
+                        .withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -141,44 +169,47 @@ class AboutMe extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
-            const Text(
+
+            _buildSectionTitle(
               'Teknologi yang Digunakan',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF111A3A),
-              ),
+              theme,
             ),
+
             const SizedBox(height: 12),
+
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                _buildTechChip('Flutter', Icons.flutter_dash),
-                _buildTechChip('Dart', Icons.code),
-                _buildTechChip('Cloudflare', Icons.cloud),
-                _buildTechChip('Supabase', Icons.storage),
+                _buildTechChip('Flutter', Icons.flutter_dash, colors),
+                _buildTechChip('Dart', Icons.code, colors),
+                _buildTechChip('Cloudflare', Icons.cloud, colors),
+                _buildTechChip('Supabase', Icons.storage, colors),
               ],
             ),
+
             const SizedBox(height: 24),
-            const Text(
-              'Fitur Utama',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF111A3A),
-              ),
-            ),
+
+            _buildSectionTitle('Fitur Utama', theme),
+
             const SizedBox(height: 12),
+
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: colors.outlineVariant
+                      .withValues(alpha: 0.4),
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
+                    color: Colors.black.withValues(
+                      alpha: isDark ? 0.12 : 0.03,
+                    ),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -186,44 +217,71 @@ class AboutMe extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _buildFeatureItem(Icons.explore, 'Eksplorasi Wisata', 'Menemukan destinasi populer di seluruh Indonesia.'),
-                  const Divider(height: 24),
-                  _buildFeatureItem(Icons.calendar_month, 'Rencana Perjalanan', 'Mencatat dan menyimpan jadwal liburan dengan mudah.'),
-                  const Divider(height: 24),
-                  _buildFeatureItem(Icons.favorite, 'Daftar Favorit', 'Menyimpan tempat wisata impian dalam satu klik.'),
+                  _buildFeatureItem(
+                    Icons.explore,
+                    'Eksplorasi Wisata',
+                    'Menemukan destinasi populer di seluruh Indonesia.',
+                    colors,
+                  ),
+                  Divider(
+                    height: 24,
+                    color: colors.outlineVariant,
+                  ),
+                  _buildFeatureItem(
+                    Icons.calendar_month,
+                    'Rencana Perjalanan',
+                    'Mencatat dan menyimpan jadwal liburan dengan mudah.',
+                    colors,
+                  ),
+                  Divider(
+                    height: 24,
+                    color: colors.outlineVariant,
+                  ),
+                  _buildFeatureItem(
+                    Icons.favorite,
+                    'Daftar Favorit',
+                    'Menyimpan tempat wisata impian dalam satu klik.',
+                    colors,
+                  ),
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
-            const Text(
-              'Tim Developer',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF111A3A),
-              ),
-            ),
+
+            _buildSectionTitle('Tim Developer', theme),
+
             const SizedBox(height: 12),
+
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: teamMembers.length,
               itemBuilder: (context, index) {
                 final member = teamMembers[index];
-                return _buildTeamCard(context, member);
+
+                return _buildTeamCard(
+                  context,
+                  member,
+                  colors,
+                  isDark,
+                );
               },
             ),
+
             const SizedBox(height: 20),
-            const Center(
+
+            Center(
               child: Text(
                 'NusaTrip v1.0.0 • Tugas Mata Kuliah PBP 2026',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey,
+                  color: colors.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
           ],
         ),
@@ -231,15 +289,33 @@ class AboutMe extends StatelessWidget {
     );
   }
 
-  Widget _buildTeamCard(BuildContext context, Map<String, dynamic> member) {
+  Widget _buildSectionTitle(
+    String title,
+    ThemeData theme,
+  ) {
+    return Text(
+      title,
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildTeamCard(
+    BuildContext context,
+    Map<String, dynamic> member,
+    ColorScheme colors,
+    bool isDark,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       height: 140,
       decoration: BoxDecoration(
-        color: const Color(0xFFEBF3FF),
+        color: colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFF2563EB).withOpacity(0.1),
+          color: colors.outlineVariant.withValues(alpha: 0.5),
           width: 1,
         ),
       ),
@@ -248,7 +324,7 @@ class AboutMe extends StatelessWidget {
           Positioned.fill(
             right: 110,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -258,20 +334,20 @@ class AboutMe extends StatelessWidget {
                     children: [
                       Text(
                         member['role'],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.2,
-                          color: Color(0xFF2563EB),
+                          color: colors.primary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         member['name'],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF111A3A),
+                          color: colors.onSurface,
                           height: 1.2,
                         ),
                         maxLines: 2,
@@ -281,17 +357,23 @@ class AboutMe extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Text(
-                        'NIM: ${member['nim']}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Color(0xFF4B5675),
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Text(
+                          'NIM: ${member['nim']}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: colors.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 5),
                       InkWell(
-                        onTap: () => _launchInstagram(context, member['instagram']),
+                        onTap: () => _launchInstagram(
+                          context,
+                          member['instagram'],
+                        ),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -299,17 +381,15 @@ class AboutMe extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                            border: Border.all(
+                              color: colors.outlineVariant
+                                  .withValues(alpha: 0.4),
+                            ),
                           ),
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
                                 Icons.camera_alt,
@@ -319,10 +399,10 @@ class AboutMe extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 '@${member['instagram']}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF111A3A),
+                                  color: colors.onSurface,
                                 ),
                               ),
                             ],
@@ -335,6 +415,7 @@ class AboutMe extends StatelessWidget {
               ),
             ),
           ),
+
           Positioned(
             right: 0,
             bottom: 0,
@@ -352,17 +433,24 @@ class AboutMe extends StatelessWidget {
                   return Container(
                     width: 110,
                     height: 140,
-                    color: const Color(0xFF2563EB).withOpacity(0.1),
-                    child: const Column(
+                    color: colors.primaryContainer,
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.broken_image, size: 30, color: Color(0xFF2563EB)),
-                        SizedBox(height: 4),
+                        Icon(
+                          Icons.broken_image,
+                          size: 30,
+                          color: colors.primary,
+                        ),
+                        const SizedBox(height: 4),
                         Text(
                           'Foto tidak ada',
-                          style: TextStyle(fontSize: 9, color: Color(0xFF2563EB)),
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: colors.primary,
+                          ),
                           textAlign: TextAlign.center,
-                        )
+                        ),
                       ],
                     ),
                   );
@@ -375,31 +463,50 @@ class AboutMe extends StatelessWidget {
     );
   }
 
-  Widget _buildTechChip(String label, IconData icon) {
+  Widget _buildTechChip(
+    String label,
+    IconData icon,
+    ColorScheme colors,
+  ) {
     return Chip(
-      avatar: Icon(icon, size: 16, color: const Color(0xFF2563EB)),
+      avatar: Icon(
+        icon,
+        size: 16,
+        color: colors.primary,
+      ),
       label: Text(label),
-      backgroundColor: const Color(0xFF2563EB).withOpacity(0.1),
+      backgroundColor: colors.primaryContainer,
       side: BorderSide.none,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      labelStyle: const TextStyle(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      labelStyle: TextStyle(
         fontWeight: FontWeight.w600,
-        color: Color(0xFF2563EB),
+        color: colors.onPrimaryContainer,
         fontSize: 12,
       ),
     );
   }
 
-  Widget _buildFeatureItem(IconData icon, String title, String subtitle) {
+  Widget _buildFeatureItem(
+    IconData icon,
+    String title,
+    String subtitle,
+    ColorScheme colors,
+  ) {
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF2563EB).withOpacity(0.1),
+            color: colors.primaryContainer,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: const Color(0xFF2563EB), size: 20),
+          child: Icon(
+            icon,
+            color: colors.primary,
+            size: 20,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -408,17 +515,17 @@ class AboutMe extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
-                  color: Color(0xFF111A3A),
+                  color: colors.onSurface,
                 ),
               ),
               Text(
                 subtitle,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF4B5675),
+                  color: colors.onSurfaceVariant,
                 ),
               ),
             ],

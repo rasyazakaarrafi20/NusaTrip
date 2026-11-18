@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../fungsi/trip_data.dart';
@@ -17,7 +18,6 @@ class TripPage extends StatefulWidget {
 }
 
 class _TripPageState extends State<TripPage> {
-  // Format tanggal
   String formatTanggal(DateTime tanggal) {
     const bulan = [
       'Januari',
@@ -69,19 +69,30 @@ class _TripPageState extends State<TripPage> {
   @override
   Widget build(BuildContext context) {
     final daftarTrip = TripData.rencana;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    final appBarBackground =
+        theme.appBarTheme.backgroundColor ?? colors.primary;
+
+    final appBarForeground =
+        theme.appBarTheme.foregroundColor ?? colors.onPrimary;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FF),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: !widget.sebagaiRiwayat,
         title: Text(
           widget.sebagaiRiwayat
               ? 'Riwayat Perjalanan'
               : 'Rencana Perjalanan',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: appBarForeground,
+          ),
         ),
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
+        backgroundColor: appBarBackground,
+        foregroundColor: appBarForeground,
         elevation: 0,
         actions: widget.sebagaiRiwayat
             ? [
@@ -94,11 +105,17 @@ class _TripPageState extends State<TripPage> {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.person_outline, color: Colors.white),
-                  label: const Text(
+                  style: TextButton.styleFrom(
+                    foregroundColor: appBarForeground,
+                  ),
+                  icon: Icon(
+                    Icons.person_outline,
+                    color: appBarForeground,
+                  ),
+                  label: Text(
                     'Profil',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: appBarForeground,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -113,17 +130,17 @@ class _TripPageState extends State<TripPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.luggage_outlined,
                     size: 70,
-                    color: Colors.grey,
+                    color: colors.onSurfaceVariant,
                   ),
                   const SizedBox(height: 15),
                   Text(
                     widget.sebagaiRiwayat
                         ? 'Belum ada riwayat perjalanan'
                         : 'Belum ada rencana perjalanan',
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -133,7 +150,10 @@ class _TripPageState extends State<TripPage> {
                     widget.sebagaiRiwayat
                         ? 'Rencana perjalanan yang kamu simpan akan muncul di sini.'
                         : 'Buat rencana dari halaman detail wisata.',
-                    style: const TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -145,6 +165,7 @@ class _TripPageState extends State<TripPage> {
                 final trip = daftarTrip[index];
 
                 return Card(
+                  color: colors.surface,
                   margin: const EdgeInsets.only(bottom: 14),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
@@ -159,19 +180,19 @@ class _TripPageState extends State<TripPage> {
                               Container(
                                 padding: const EdgeInsets.all(11),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE8F0FF),
+                                  color: colors.primaryContainer,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.place_outlined,
-                                  color: Color(0xFF2563EB),
+                                  color: colors.primary,
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   trip.namaWisata,
-                                  style: const TextStyle(
+                                  style: theme.textTheme.titleMedium?.copyWith(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -189,16 +210,17 @@ class _TripPageState extends State<TripPage> {
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.calendar_today,
                                 size: 17,
-                                color: Color(0xFF2563EB),
+                                color: colors.primary,
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   '${formatTanggal(trip.tanggalMulai)} – '
                                   '${formatTanggal(trip.tanggalSelesai)}',
+                                  style: theme.textTheme.bodyMedium,
                                 ),
                               ),
                             ],
@@ -206,26 +228,29 @@ class _TripPageState extends State<TripPage> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.timelapse,
                                 size: 17,
-                                color: Color(0xFF2563EB),
+                                color: colors.primary,
                               ),
                               const SizedBox(width: 8),
-                              Text('${durasi(trip)} hari'),
+                              Text(
+                                '${durasi(trip)} hari',
+                                style: theme.textTheme.bodyMedium,
+                              ),
                               const Spacer(),
-                              const Text(
+                              Text(
                                 'Lihat detail',
                                 style: TextStyle(
-                                  color: Color(0xFF2563EB),
+                                  color: colors.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              const Icon(
+                              Icon(
                                 Icons.arrow_forward_ios,
                                 size: 13,
-                                color: Color(0xFF2563EB),
+                                color: colors.primary,
                               ),
                             ],
                           ),
@@ -272,15 +297,27 @@ class TripDetailPage extends StatelessWidget {
     final totalHari =
         trip.tanggalSelesai.difference(trip.tanggalMulai).inDays + 1;
 
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    final appBarBackground =
+        theme.appBarTheme.backgroundColor ?? colors.primary;
+
+    final appBarForeground =
+        theme.appBarTheme.foregroundColor ?? colors.onPrimary;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FF),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Detail Perjalanan',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: appBarForeground,
+          ),
         ),
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
+        backgroundColor: appBarBackground,
+        foregroundColor: appBarForeground,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -288,10 +325,10 @@ class TripDetailPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [
-                  Color(0xFF2563EB),
-                  Color(0xFF4F80F5),
+                  colors.primary,
+                  colors.primary.withValues(alpha: 0.75),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -338,21 +375,25 @@ class TripDetailPage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           _detailCard(
+            context: context,
             icon: Icons.date_range,
             title: 'Jadwal Perjalanan',
             child: Column(
               children: [
                 _dateRow(
+                  context,
                   'Tanggal mulai',
                   formatTanggal(trip.tanggalMulai),
                 ),
                 const Divider(height: 22),
                 _dateRow(
+                  context,
                   'Tanggal selesai',
                   formatTanggal(trip.tanggalSelesai),
                 ),
                 const Divider(height: 22),
                 _dateRow(
+                  context,
                   'Durasi',
                   '$totalHari hari',
                 ),
@@ -361,30 +402,32 @@ class TripDetailPage extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           _detailCard(
+            context: context,
             icon: Icons.notes,
             title: 'Catatan Perjalanan',
             child: Text(
               trip.catatan.isEmpty
                   ? 'Belum ada catatan untuk perjalanan ini.'
                   : trip.catatan,
-              style: const TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: 14,
                 height: 1.6,
-                color: Color(0xFF475569),
+                color: colors.onSurfaceVariant,
               ),
             ),
           ),
           const SizedBox(height: 14),
           _detailCard(
+            context: context,
             icon: Icons.info_outline,
             title: 'Informasi',
-            child: const Text(
+            child: Text(
               'Pastikan jadwal dan perlengkapan perjalanan '
               'sudah dipersiapkan sebelum berangkat.',
-              style: TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: 14,
                 height: 1.6,
-                color: Color(0xFF475569),
+                color: colors.onSurfaceVariant,
               ),
             ),
           ),
@@ -394,14 +437,18 @@ class TripDetailPage extends StatelessWidget {
   }
 
   Widget _detailCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Widget child,
   }) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -411,12 +458,12 @@ class TripDetailPage extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: const Color(0xFF2563EB),
+                color: colors.primary,
               ),
               const SizedBox(width: 9),
               Text(
                 title,
-                style: const TextStyle(
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -430,18 +477,29 @@ class TripDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _dateRow(String label, String value) {
+  Widget _dateRow(
+    BuildContext context,
+    String label,
+    String value,
+  ) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Row(
       children: [
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(color: Colors.grey),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
           ),
         ),
         Text(
           value,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );

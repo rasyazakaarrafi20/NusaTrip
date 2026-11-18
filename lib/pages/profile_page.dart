@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../fungsi/theme_controller.dart';
+import '../fungsi/favorite_data.dart';
+import '../fungsi/review_data.dart';
+import '../fungsi/user_data.dart';
+
 import 'about_me.dart';
 import 'account_page.dart';
 import 'favorite_page.dart';
 import 'trip_page.dart';
-
-import '../fungsi/favorite_data.dart';
-import '../fungsi/review_data.dart';
-import '../fungsi/user_data.dart';
 
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_item.dart';
@@ -43,7 +44,10 @@ class _ProfilePageState extends State<ProfilePage> {
     const biru = Color(0xFF2563EB);
 
     final user = Supabase.instance.client.auth.currentUser;
-    final namaUser = user?.userMetadata?['full_name'] ?? 'Pengguna NusaTrip';
+
+    final namaUser =
+        user?.userMetadata?['full_name'] ?? 'Pengguna NusaTrip';
+
     final emailUser = user?.email ?? '-';
 
     final jumlahReview = user == null
@@ -52,109 +56,168 @@ class _ProfilePageState extends State<ProfilePage> {
             .where((review) => review.idUser.toString() == user.id)
             .length;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: biru,
-        foregroundColor: Colors.white,
-        title: const Text(
-          'Profile',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
+    return AnimatedBuilder(
+      animation: ThemeController.instance,
+      builder: (context, child) {
+        final isDark = ThemeController.instance.isDarkMode;
+        final theme = Theme.of(context);
+        final colors = theme.colorScheme;
 
-            ProfileHeader(
-              nama: namaUser.toString(),
-              email: emailUser,
-              fotoProfilUrl: user?.userMetadata?['avatar_url']?.toString(),
-              fotoProfil: userAktif?.fotoProfil,
-              gunakanFluttermoji:
-                  user?.userMetadata?['avatar_mode'] == 'fluttermoji',
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor:
+                theme.appBarTheme.backgroundColor ?? colors.primary,
+            foregroundColor:
+                theme.appBarTheme.foregroundColor ?? colors.onPrimary,
+            title: const Text(
+              'Profile',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
+          ),
 
-            const SizedBox(height: 25),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
 
-            ProfileStats(
-              jumlahFavorit: FavoriteData.favorit.length,
-              jumlahReview: jumlahReview,
-            ),
+                // HEADER PROFIL
+                ProfileHeader(
+                  nama: namaUser.toString(),
+                  email: emailUser,
+                  fotoProfilUrl:
+                      user?.userMetadata?['avatar_url']?.toString(),
+                  fotoProfil: userAktif?.fotoProfil,
+                  gunakanFluttermoji:
+                      user?.userMetadata?['avatar_mode'] == 'fluttermoji',
+                ),
 
-            const SizedBox(height: 25),
+                const SizedBox(height: 25),
 
-            ProfileMenuItem(
-              icon: Icons.favorite,
-              iconColor: Colors.red,
-              title: 'Favorit',
-              subtitle: 'Destinasi tersimpan',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FavoritePage(),
+                // STATISTIK PROFIL
+                ProfileStats(
+                  jumlahFavorit: FavoriteData.favorit.length,
+                  jumlahReview: jumlahReview,
+                ),
+
+                const SizedBox(height: 25),
+
+                // MENU FAVORIT
+                ProfileMenuItem(
+                  icon: Icons.favorite,
+                  iconColor: Colors.red,
+                  title: 'Favorit',
+                  subtitle: 'Destinasi tersimpan',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FavoritePage(),
+                      ),
+                    );
+                  },
+                ),
+
+                // MENU RENCANA PERJALANAN
+                ProfileMenuItem(
+                  icon: Icons.calendar_month,
+                  iconColor: biru,
+                  title: 'Rencana Perjalanan',
+                  subtitle: 'Lihat dan kelola perjalanan',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TripPage(),
+                      ),
+                    );
+                  },
+                ),
+
+                // MENU AKUN
+                ProfileMenuItem(
+                  icon: Icons.person,
+                  iconColor: biru,
+                  title: 'Akun',
+                  subtitle: 'Ubah nama, email, dan foto profil',
+                  onTap: _bukaAkun,
+                ),
+
+                // MENU ABOUT
+                ProfileMenuItem(
+                  icon: Icons.info,
+                  iconColor: Colors.green,
+                  title: 'About NusaTrip',
+                  subtitle: 'Tentang aplikasi',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AboutMe(),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 15),
+
+                // PENGATURAN DARK MODE
+                Card(
+                  child: SwitchListTile(
+                    secondary: Icon(
+                      isDark
+                          ? Icons.dark_mode
+                          : Icons.light_mode,
+                      color: colors.primary,
+                    ),
+
+                    title: const Text(
+                      'Dark Mode',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    subtitle: Text(
+                      isDark
+                          ? 'Tampilan gelap aktif'
+                          : 'Tampilan terang aktif',
+                    ),
+
+                    value: isDark,
+
+                    activeThumbColor: colors.primary,
+
+                    onChanged: (value) {
+                      ThemeController.instance.setDarkMode(value);
+                    },
                   ),
-                );
-              },
+                ),
+
+                const SizedBox(height: 15),
+
+                // LOGOUT
+                ProfileLogoutButton(
+                  onTap: () async {
+                    await Supabase.instance.client.auth.signOut();
+
+                    if (context.mounted) {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        '/login',
+                      );
+                    }
+                  },
+                ),
+
+                const SizedBox(height: 20),
+              ],
             ),
-
-            ProfileMenuItem(
-              icon: Icons.calendar_month,
-              iconColor: biru,
-              title: 'Rencana Perjalanan',
-              subtitle: 'Lihat dan kelola perjalanan',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TripPage(),
-                  ),
-                );
-              },
-            ),
-
-            ProfileMenuItem(
-              icon: Icons.person,
-              iconColor: biru,
-              title: 'Akun',
-              subtitle: 'Ubah nama, email, dan foto profil',
-              onTap: _bukaAkun,
-            ),
-
-            ProfileMenuItem(
-              icon: Icons.info,
-              iconColor: Colors.green,
-              title: 'About NusaTrip',
-              subtitle: 'Tentang aplikasi',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AboutMe(),
-                  ),
-                );
-              },
-            ),
-
-            const SizedBox(height: 10),
-
-            ProfileLogoutButton(
-              onTap: () async {
-                await Supabase.instance.client.auth.signOut();
-
-                if (context.mounted) {
-                  Navigator.pushReplacementNamed(context, '/login');
-                }
-              },
-            ),
-
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -100,14 +101,20 @@ class _DetailWisataState extends State<DetailWisata> {
   Widget build(BuildContext context) {
     final daftarFoto = ambilFoto();
 
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     debugPrint('NAMA WISATA: ${widget.wisata.nama}');
     debugPrint('URL GAMBAR: ${widget.wisata.gambar}');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FF),
+      backgroundColor: theme.scaffoldBackgroundColor,
+
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
+        backgroundColor:
+            theme.appBarTheme.backgroundColor ?? colors.primary,
+        foregroundColor:
+            theme.appBarTheme.foregroundColor ?? colors.onPrimary,
         title: const Text(
           'Detail Destinasi',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -136,10 +143,13 @@ class _DetailWisataState extends State<DetailWisata> {
                 ),
               );
             },
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+            ),
           ),
         ],
       ),
+
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,10 +202,10 @@ class _DetailWisataState extends State<DetailWisata> {
                 children: [
                   Text(
                     widget.wisata.nama,
-                    style: const TextStyle(
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A),
+                      color: colors.onSurface,
                     ),
                   ),
 
@@ -203,26 +213,31 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.location_on,
                         size: 20,
-                        color: Color(0xFF2563EB),
+                        color: colors.primary,
                       ),
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(
                           widget.wisata.lokasi,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
                             fontSize: 15,
                           ),
                         ),
                       ),
-                      const Icon(Icons.star, size: 20, color: Colors.amber),
+                      const Icon(
+                        Icons.star,
+                        size: 20,
+                        color: Colors.amber,
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         widget.wisata.rating,
-                        style: const TextStyle(
+                        style: TextStyle(
+                          color: colors.onSurface,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -243,8 +258,8 @@ class _DetailWisataState extends State<DetailWisata> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
-                        foregroundColor: Colors.white,
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -254,9 +269,12 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const SizedBox(height: 30),
 
-                  const Text(
+                  Text(
                     'Tentang Destinasi',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.onSurface,
+                    ),
                   ),
 
                   const SizedBox(height: 10),
@@ -265,14 +283,14 @@ class _DetailWisataState extends State<DetailWisata> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Text(
                       widget.wisata.deskripsi,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
-                        color: Colors.grey,
+                        color: colors.onSurfaceVariant,
                         height: 1.6,
                       ),
                     ),
@@ -280,9 +298,12 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const SizedBox(height: 24),
 
-                  const Text(
+                  Text(
                     'Lokasi Destinasi',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.onSurface,
+                    ),
                   ),
 
                   const SizedBox(height: 12),
@@ -301,26 +322,29 @@ class _DetailWisataState extends State<DetailWisata> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: const Column(
+                      child: Column(
                         children: [
                           Icon(
                             Icons.location_on,
                             size: 35,
-                            color: Color(0xFF2563EB),
+                            color: colors.primary,
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             'Koordinat peta belum tersedia.',
                             textAlign: TextAlign.center,
+                            style: TextStyle(color: colors.onSurface),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             'Gunakan tombol Google Maps untuk mencari lokasi.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey),
+                            style: TextStyle(
+                              color: colors.onSurfaceVariant,
+                            ),
                           ),
                         ],
                       ),
@@ -328,9 +352,12 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const SizedBox(height: 25),
 
-                  const Text(
+                  Text(
                     'Informasi Wisata',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.onSurface,
+                    ),
                   ),
 
                   const SizedBox(height: 15),
@@ -383,9 +410,12 @@ class _DetailWisataState extends State<DetailWisata> {
 
                   const SizedBox(height: 30),
 
-                  const Text(
+                  Text(
                     'Tips Berkunjung',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.onSurface,
+                    ),
                   ),
 
                   const SizedBox(height: 15),
@@ -395,7 +425,10 @@ class _DetailWisataState extends State<DetailWisata> {
                     'Pilih waktu berkunjung yang sesuai.',
                   ),
 
-                  tipItem(Icons.backpack, 'Bawa perlengkapan yang diperlukan.'),
+                  tipItem(
+                    Icons.backpack,
+                    'Bawa perlengkapan yang diperlukan.',
+                  ),
 
                   tipItem(
                     Icons.wb_sunny,
@@ -436,7 +469,9 @@ class _DetailWisataState extends State<DetailWisata> {
                   Center(
                     child: Text(
                       '© 2026 NusaTrip',
-                      style: TextStyle(color: Colors.grey.shade600),
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ],
@@ -449,24 +484,40 @@ class _DetailWisataState extends State<DetailWisata> {
   }
 
   Widget infoCard(IconData icon, String title, String value) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: const Color(0xFF2563EB), size: 25),
+          Icon(
+            icon,
+            color: colors.primary,
+            size: 25,
+          ),
           const SizedBox(height: 8),
-          Text(title, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(
+            title,
+            style: TextStyle(
+              color: colors.onSurfaceVariant,
+              fontSize: 12,
+            ),
+          ),
           const SizedBox(height: 3),
           Text(
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(
+              color: colors.onSurface,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
           ),
         ],
       ),
@@ -474,18 +525,31 @@ class _DetailWisataState extends State<DetailWisata> {
   }
 
   Widget tipItem(IconData icon, String text) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF2563EB)),
+          Icon(
+            icon,
+            color: colors.primary,
+          ),
           const SizedBox(width: 12),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: colors.onSurface,
+                fontSize: 14,
+              ),
+            ),
+          ),
         ],
       ),
     );

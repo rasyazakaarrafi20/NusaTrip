@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../fungsi/review_data.dart';
@@ -24,13 +25,19 @@ class ReviewSection extends StatelessWidget {
       return;
     }
 
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
+      backgroundColor: colors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(24),
+        ),
+        side: BorderSide(
+          color: colors.outlineVariant,
         ),
       ),
       builder: (context) {
@@ -52,6 +59,9 @@ class ReviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     final reviews = reviewUntukWisata(idWisata);
 
     return Column(
@@ -60,17 +70,18 @@ class ReviewSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               '⭐ Review Pengunjung',
               style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.bold,
+                color: colors.onSurface,
               ),
             ),
             Text(
               '${reviews.length} review',
-              style: const TextStyle(
-                color: Colors.grey,
+              style: TextStyle(
+                color: colors.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
@@ -84,28 +95,32 @@ class ReviewSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: colors.outlineVariant,
+              ),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Icon(
                   Icons.rate_review_outlined,
                   size: 40,
-                  color: Colors.grey,
+                  color: colors.onSurfaceVariant,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Belum ada review',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    color: colors.onSurface,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   'Jadilah yang pertama memberikan review.',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: colors.onSurfaceVariant,
                     fontSize: 12,
                   ),
                   textAlign: TextAlign.center,
@@ -117,29 +132,38 @@ class ReviewSection extends StatelessWidget {
           Column(
             children: reviews.map((review) {
               final user = cariUser(review.idUser);
+
               return Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: colors.outlineVariant,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 18,
-                          child: Icon(Icons.person),
+                          backgroundColor: colors.primaryContainer,
+                          child: Icon(
+                            Icons.person,
+                            color: colors.onPrimaryContainer,
+                          ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             user?.nama ?? 'Pengguna',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
+                              color: colors.onSurface,
                             ),
                           ),
                         ),
@@ -160,9 +184,10 @@ class ReviewSection extends StatelessWidget {
 
                     Text(
                       review.komentar,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         height: 1.4,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -180,9 +205,9 @@ class ReviewSection extends StatelessWidget {
             icon: const Icon(Icons.edit),
             label: const Text('Tulis Review'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF2563EB),
-              side: const BorderSide(
-                color: Color(0xFF2563EB),
+              foregroundColor: colors.primary,
+              side: BorderSide(
+                color: colors.primary,
               ),
               padding: const EdgeInsets.symmetric(
                 vertical: 13,

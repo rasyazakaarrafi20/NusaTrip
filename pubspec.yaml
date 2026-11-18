@@ -43,6 +43,7 @@ dependencies:
   shared_preferences: ^2.5.6
   fluttermoji: ^1.0.2
   inspireui: ^2.4.2
+  flex_color_scheme: 8.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

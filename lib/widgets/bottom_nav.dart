@@ -1,3 +1,4 @@
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -6,22 +7,37 @@ class BottomNav extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const BottomNav({super.key, required this.currentIndex, required this.onTap});
+  const BottomNav({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        bottom: 24,
+      ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(50), // Bentuk Pil
+        borderRadius: BorderRadius.circular(50),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15), // Efek Kaca
+          filter: ImageFilter.blur(
+            sigmaX: 15,
+            sigmaY: 15,
+          ),
           child: Container(
             height: 70,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(
-                alpha: 0.85,
-              ), // Selalu putih transparan
+              color: colors.surface.withValues(
+                alpha: isDark ? 0.90 : 0.85,
+              ),
               borderRadius: BorderRadius.circular(50),
               boxShadow: [
                 BoxShadow(
@@ -31,7 +47,7 @@ class BottomNav extends StatelessWidget {
                 ),
               ],
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.5),
+                color: colors.outline.withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
@@ -74,20 +90,22 @@ class BottomNav extends StatelessWidget {
     IconData activeIcon,
     String label,
   ) {
-    final bool isActive = currentIndex == index;
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final isActive = currentIndex == index;
+    final colors = Theme.of(context).colorScheme;
 
     return Expanded(
       child: GestureDetector(
-        // Pakai GestureDetector murni agar tidak ada splash bulat gelap
         onTap: () => onTap(index),
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutBack,
-          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          margin: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 8,
+          ),
           decoration: BoxDecoration(
-            color: isActive ? primaryColor : Colors.transparent, // Pil Biru
+            color: isActive ? colors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(50),
           ),
           child: Column(
@@ -95,8 +113,9 @@ class BottomNav extends StatelessWidget {
             children: [
               Icon(
                 isActive ? activeIcon : icon,
-                // Ganti Colors.grey dengan #4B5675 (Abu Navy Gelap) agar kontras
-                color: isActive ? Colors.white : const Color(0xFF4B5675),
+                color: isActive
+                    ? colors.onPrimary
+                    : colors.onSurfaceVariant,
                 size: 24,
               ),
               const SizedBox(height: 4),
@@ -104,8 +123,12 @@ class BottomNav extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 10,
-                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                  color: isActive ? Colors.white : const Color(0xFF4B5675),
+                  fontWeight: isActive
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  color: isActive
+                      ? colors.onPrimary
+                      : colors.onSurfaceVariant,
                 ),
               ),
             ],

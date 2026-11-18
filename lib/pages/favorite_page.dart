@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '/fungsi/favorite_data.dart';
@@ -7,7 +8,10 @@ import 'detail_wisata.dart';
 import 'profile_page.dart';
 
 class FavoritePage extends StatefulWidget {
-  const FavoritePage({super.key, this.dariNavbar = false});
+  const FavoritePage({
+    super.key,
+    this.dariNavbar = false,
+  });
 
   final bool dariNavbar;
 
@@ -25,17 +29,28 @@ class FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     final daftarFavorit = FavoriteData.favorit;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    final appBarBackground =
+        theme.appBarTheme.backgroundColor ?? colors.primary;
+
+    final appBarForeground =
+        theme.appBarTheme.foregroundColor ?? colors.onPrimary;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F9FF),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
+        backgroundColor: appBarBackground,
+        foregroundColor: appBarForeground,
         elevation: 0,
         automaticallyImplyLeading: !widget.dariNavbar,
-        title: const Text(
+        title: Text(
           'Favorit Saya',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: appBarForeground,
+          ),
         ),
         actions: widget.dariNavbar
             ? [
@@ -48,11 +63,17 @@ class FavoritePageState extends State<FavoritePage> {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.person_outline, color: Colors.white),
-                  label: const Text(
+                  style: TextButton.styleFrom(
+                    foregroundColor: appBarForeground,
+                  ),
+                  icon: Icon(
+                    Icons.person_outline,
+                    color: appBarForeground,
+                  ),
+                  label: Text(
                     'Profil',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: appBarForeground,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -63,20 +84,29 @@ class FavoritePageState extends State<FavoritePage> {
             : null,
       ),
       body: daftarFavorit.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.favorite_border, size: 70, color: Colors.grey),
-                  SizedBox(height: 15),
+                  Icon(
+                    Icons.favorite_border,
+                    size: 70,
+                    color: colors.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: 15),
                   Text(
                     'Belum ada destinasi favorit',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Text(
                     'Tambahkan destinasi dengan menekan ❤️',
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -84,6 +114,7 @@ class FavoritePageState extends State<FavoritePage> {
           : LayoutBuilder(
               builder: (context, constraints) {
                 int crossAxisCount = 1;
+
                 if (constraints.maxWidth > 900) {
                   crossAxisCount = 4;
                 } else if (constraints.maxWidth > 600) {
@@ -95,7 +126,8 @@ class FavoritePageState extends State<FavoritePage> {
                 return GridView.builder(
                   padding: const EdgeInsets.all(20),
                   itemCount: daftarFavorit.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
@@ -105,7 +137,7 @@ class FavoritePageState extends State<FavoritePage> {
                     final tempat = daftarFavorit[index];
 
                     return Card(
-                      color: Colors.white,
+                      color: colors.surface,
                       elevation: 3,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -120,7 +152,9 @@ class FavoritePageState extends State<FavoritePage> {
                                   DetailWisata(wisata: tempat),
                             ),
                           ).then((_) {
-                            setState(() {});
+                            if (mounted) {
+                              setState(() {});
+                            }
                           });
                         },
                         child: Column(
@@ -132,11 +166,11 @@ class FavoritePageState extends State<FavoritePage> {
                               child: WisataImage(
                                 sumber: tempat.gambar,
                                 namaWisata: tempat.nama,
-                                fallbackAsset: tempat.gambarFallbackLokal,
+                                fallbackAsset:
+                                    tempat.gambarFallbackLokal,
                                 fit: BoxFit.cover,
                               ),
                             ),
-
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -144,7 +178,8 @@ class FavoritePageState extends State<FavoritePage> {
                                   vertical: 8,
                                 ),
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
                                   children: [
                                     Expanded(
                                       child: Column(
@@ -155,33 +190,38 @@ class FavoritePageState extends State<FavoritePage> {
                                         children: [
                                           Text(
                                             tempat.nama,
-                                            style: const TextStyle(
+                                            style: theme.textTheme
+                                                .titleSmall
+                                                ?.copyWith(
                                               fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF111A3A),
+                                              fontWeight:
+                                                  FontWeight.bold,
                                             ),
                                             maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
+                                            overflow:
+                                                TextOverflow.ellipsis,
                                           ),
                                           const SizedBox(height: 4),
                                           Row(
                                             children: [
-                                              const Icon(
+                                              Icon(
                                                 Icons.location_on,
                                                 size: 14,
-                                                color: Colors.grey,
+                                                color: colors
+                                                    .onSurfaceVariant,
                                               ),
                                               const SizedBox(width: 4),
                                               Expanded(
                                                 child: Text(
                                                   tempat.lokasi,
                                                   style: TextStyle(
-                                                    color: Colors.grey[600],
+                                                    color: colors
+                                                        .onSurfaceVariant,
                                                     fontSize: 12,
                                                   ),
                                                   maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                  overflow: TextOverflow
+                                                      .ellipsis,
                                                 ),
                                               ),
                                             ],
@@ -190,13 +230,15 @@ class FavoritePageState extends State<FavoritePage> {
                                       ),
                                     ),
                                     IconButton(
-                                      onPressed: () => hapusFavorit(tempat),
+                                      onPressed: () =>
+                                          hapusFavorit(tempat),
                                       icon: const Icon(
                                         Icons.favorite,
                                         color: Colors.red,
                                       ),
                                       padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
+                                      constraints:
+                                          const BoxConstraints(),
                                     ),
                                   ],
                                 ),

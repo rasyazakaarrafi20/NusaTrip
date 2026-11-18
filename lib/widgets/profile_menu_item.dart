@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class ProfileMenuItem extends StatelessWidget {
@@ -18,13 +19,16 @@ class ProfileMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: colors.outlineVariant.withValues(alpha: 0.5),
         ),
       ),
       child: ListTile(
@@ -37,7 +41,7 @@ class ProfileMenuItem extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.10),
+            color: iconColor.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Icon(
@@ -49,9 +53,10 @@ class ProfileMenuItem extends StatelessWidget {
 
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
+            color: colors.onSurface,
           ),
         ),
 
@@ -59,17 +64,17 @@ class ProfileMenuItem extends StatelessWidget {
           padding: const EdgeInsets.only(top: 4),
           child: Text(
             subtitle,
-            style: const TextStyle(
-              color: Colors.grey,
+            style: TextStyle(
+              color: colors.onSurfaceVariant,
               fontSize: 13,
             ),
           ),
         ),
 
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
           size: 17,
-          color: Colors.grey,
+          color: colors.onSurfaceVariant,
         ),
 
         onTap: onTap,

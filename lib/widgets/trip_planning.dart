@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../fungsi/trip_data.dart';
 import '../models/trip_plan.dart';
@@ -30,11 +31,28 @@ class _TripPlanningState extends State<TripPlanning> {
   Future<void> pilihTanggal({
     required bool tanggalMulaiPilih,
   }) async {
+    final now = DateTime.now();
     final tanggal = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: tanggalMulaiPilih
+          ? (tanggalMulai ?? now)
+          : (tanggalSelesai ?? tanggalMulai ?? now),
+      firstDate: now,
       lastDate: DateTime(2035),
+      builder: (context, child) {
+        final theme = Theme.of(context);
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: theme.colorScheme.primary,
+              onPrimary: theme.colorScheme.onPrimary,
+              surface: theme.colorScheme.surface,
+              onSurface: theme.colorScheme.onSurface,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (tanggal == null) return;
@@ -53,43 +71,53 @@ class _TripPlanningState extends State<TripPlanning> {
     });
   }
 
-    void simpanRencana() {
-      if (tanggalMulai == null || tanggalSelesai == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Silakan pilih tanggal mulai dan tanggal selesai.',
-            ),
-          ),
-        );
-        return;
-      }
-
-      final trip = TripPlan(
-        id: TripData.rencana.length + 1,
-        namaWisata: widget.namaWisata,
-        tanggalMulai: tanggalMulai!,
-        tanggalSelesai: tanggalSelesai!,
-        catatan: catatanController.text.trim(),
-      );
-
-      TripData.tambah(trip);
-
-      // Bersihkan form
-      setState(() {
-        tanggalMulai = null;
-        tanggalSelesai = null;
-        catatanController.clear();
-      });
-
+  void simpanRencana() {
+    if (tanggalMulai == null || tanggalSelesai == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            '✅ Rencana perjalanan berhasil disimpan.',
+            'Silakan pilih tanggal mulai dan tanggal selesai.',
           ),
         ),
       );
+      return;
     }
+
+    if (tanggalSelesai!.isBefore(tanggalMulai!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Tanggal selesai tidak boleh sebelum tanggal mulai.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    final trip = TripPlan(
+      id: TripData.rencana.length + 1,
+      namaWisata: widget.namaWisata,
+      tanggalMulai: tanggalMulai!,
+      tanggalSelesai: tanggalSelesai!,
+      catatan: catatanController.text.trim(),
+    );
+
+    TripData.tambah(trip);
+
+    setState(() {
+      tanggalMulai = null;
+      tanggalSelesai = null;
+      catatanController.clear();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          '✅ Rencana perjalanan berhasil disimpan.',
+        ),
+      ),
+    );
+  }
 
   String formatTanggal(DateTime? tanggal) {
     if (tanggal == null) {
@@ -109,15 +137,31 @@ class _TripPlanningState extends State<TripPlanning> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    final cardColor = colors.surface;
+    final fieldColor = isDark
+        ? colors.surfaceContainerHighest
+        : const Color(0xFFF8FAFC);
+    final borderColor = colors.outlineVariant;
+    final textColor = colors.onSurface;
+    final secondaryColor = colors.onSurfaceVariant;
+    final primaryColor = colors.primary;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(
+              alpha: isDark ? 0.15 : 0.06,
+            ),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -131,21 +175,22 @@ class _TripPlanningState extends State<TripPlanning> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8F0FF),
+                  color: colors.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.calendar_month,
-                  color: Color(0xFF2563EB),
+                  color: colors.onPrimaryContainer,
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Rencanakan Perjalanan',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: textColor,
                   ),
                 ),
               ),
@@ -154,143 +199,80 @@ class _TripPlanningState extends State<TripPlanning> {
 
           const SizedBox(height: 8),
 
-          const Text(
+          Text(
             'Atur jadwal perjalananmu sebelum berangkat.',
             style: TextStyle(
-              color: Colors.grey,
+              color: secondaryColor,
               fontSize: 14,
             ),
           ),
 
           const SizedBox(height: 22),
 
-          const Text(
-            'Tanggal Mulai',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          _label('Tanggal Mulai', textColor),
 
           const SizedBox(height: 8),
 
-          InkWell(
-            onTap: () {
-              pilihTanggal(tanggalMulaiPilih: true);
-            },
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 15,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: const Color(0xFFE2E8F0),
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    size: 20,
-                    color: Color(0xFF2563EB),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    formatTanggal(tanggalMulai),
-                    style: TextStyle(
-                      color: tanggalMulai == null
-                          ? Colors.grey
-                          : const Color(0xFF0F172A),
-                    ),
-                  ),
-                ],
-              ),
+          _dateField(
+            tanggal: tanggalMulai,
+            onTap: () => pilihTanggal(
+              tanggalMulaiPilih: true,
             ),
+            fieldColor: fieldColor,
+            borderColor: borderColor,
+            textColor: textColor,
+            secondaryColor: secondaryColor,
+            primaryColor: primaryColor,
           ),
 
           const SizedBox(height: 18),
 
-          const Text(
-            'Tanggal Selesai',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          _label('Tanggal Selesai', textColor),
 
           const SizedBox(height: 8),
 
-          InkWell(
-            onTap: () {
-              pilihTanggal(tanggalMulaiPilih: false);
-            },
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 15,
-              ),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: const Color(0xFFE2E8F0),
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    size: 20,
-                    color: Color(0xFF2563EB),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    formatTanggal(tanggalSelesai),
-                    style: TextStyle(
-                      color: tanggalSelesai == null
-                          ? Colors.grey
-                          : const Color(0xFF0F172A),
-                    ),
-                  ),
-                ],
-              ),
+          _dateField(
+            tanggal: tanggalSelesai,
+            onTap: () => pilihTanggal(
+              tanggalMulaiPilih: false,
             ),
+            fieldColor: fieldColor,
+            borderColor: borderColor,
+            textColor: textColor,
+            secondaryColor: secondaryColor,
+            primaryColor: primaryColor,
           ),
 
           const SizedBox(height: 18),
 
-          const Text(
-            'Catatan Perjalanan',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          _label('Catatan Perjalanan', textColor),
 
           const SizedBox(height: 8),
 
           TextField(
             controller: catatanController,
             maxLines: 4,
+            style: TextStyle(color: textColor),
             decoration: InputDecoration(
               hintText:
                   'Contoh: berangkat pagi, membawa perlengkapan...',
+              hintStyle: TextStyle(color: secondaryColor),
               filled: true,
-              fillColor: const Color(0xFFF8FAFC),
+              fillColor: fieldColor,
+              contentPadding: const EdgeInsets.all(14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(
-                  color: Color(0xFFE2E8F0),
-                ),
+                borderSide: BorderSide(color: borderColor),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(
-                  color: Color(0xFFE2E8F0),
+                borderSide: BorderSide(color: borderColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: primaryColor,
+                  width: 1.5,
                 ),
               ),
             ),
@@ -311,8 +293,8 @@ class _TripPlanningState extends State<TripPlanning> {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                foregroundColor: Colors.white,
+                backgroundColor: primaryColor,
+                foregroundColor: colors.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -322,15 +304,16 @@ class _TripPlanningState extends State<TripPlanning> {
 
           const SizedBox(height: 22),
 
-          const Divider(),
+          Divider(color: borderColor),
 
           const SizedBox(height: 12),
 
-          const Text(
+          Text(
             'Layanan Perjalanan',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
+              color: textColor,
             ),
           ),
 
@@ -339,31 +322,113 @@ class _TripPlanningState extends State<TripPlanning> {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
+                child: _serviceButton(
+                  icon: Icons.map_outlined,
+                  label: 'Maps',
                   onPressed: widget.onMaps,
-                  icon: const Icon(Icons.map_outlined),
-                  label: const Text('Maps'),
+                  colors: colors,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: OutlinedButton.icon(
+                child: _serviceButton(
+                  icon: Icons.flight,
+                  label: 'Tiket',
                   onPressed: widget.onTiket,
-                  icon: const Icon(Icons.flight),
-                  label: const Text('Tiket'),
+                  colors: colors,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: OutlinedButton.icon(
+                child: _serviceButton(
+                  icon: Icons.hotel,
+                  label: 'Hotel',
                   onPressed: widget.onPenginapan,
-                  icon: const Icon(Icons.hotel),
-                  label: const Text('Hotel'),
+                  colors: colors,
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _label(String text, Color color) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: color,
+      ),
+    );
+  }
+
+  Widget _dateField({
+    required DateTime? tanggal,
+    required VoidCallback onTap,
+    required Color fieldColor,
+    required Color borderColor,
+    required Color textColor,
+    required Color secondaryColor,
+    required Color primaryColor,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 15,
+        ),
+        decoration: BoxDecoration(
+          color: fieldColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: borderColor),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.calendar_today,
+              size: 20,
+              color: primaryColor,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              formatTanggal(tanggal),
+              style: TextStyle(
+                color: tanggal == null
+                    ? secondaryColor
+                    : textColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _serviceButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required ColorScheme colors,
+  }) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 18),
+      label: Text(
+        label,
+        overflow: TextOverflow.ellipsis,
+      ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colors.primary,
+        side: BorderSide(color: colors.outline),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 6,
+          vertical: 12,
+        ),
       ),
     );
   }

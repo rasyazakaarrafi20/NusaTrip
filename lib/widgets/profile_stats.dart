@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class ProfileStats extends StatelessWidget {
@@ -12,11 +13,17 @@ class ProfileStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F9FF),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: 0.4),
+        ),
       ),
       child: Row(
         children: [
@@ -32,7 +39,7 @@ class ProfileStats extends StatelessWidget {
           Container(
             width: 1,
             height: 45,
-            color: Colors.grey.shade300,
+            color: colors.outlineVariant,
           ),
 
           Expanded(
@@ -64,6 +71,8 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Icon(
@@ -76,16 +85,17 @@ class _StatItem extends StatelessWidget {
 
         Text(
           nilai,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 19,
             fontWeight: FontWeight.bold,
+            color: colors.onSurface,
           ),
         ),
 
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.grey,
+          style: TextStyle(
+            color: colors.onSurfaceVariant,
             fontSize: 12,
           ),
         ),

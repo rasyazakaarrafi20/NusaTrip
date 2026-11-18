@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../models/wisata.dart';
@@ -26,6 +27,10 @@ class _DestinationCardState extends State<DestinationCard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -33,17 +38,28 @@ class _DestinationCardState extends State<DestinationCard> {
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
+          transform: Matrix4.translationValues(
+            0,
+            _isHovered ? -4 : 0,
+            0,
+          ),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: _isHovered ? 0.12 : 0.05),
+                color: Colors.black.withValues(
+                  alpha: isDark
+                      ? (_isHovered ? 0.30 : 0.18)
+                      : (_isHovered ? 0.12 : 0.05),
+                ),
                 blurRadius: _isHovered ? 20 : 10,
                 offset: Offset(0, _isHovered ? 8 : 4),
               ),
             ],
+            border: Border.all(
+              color: colors.outlineVariant.withValues(alpha: 0.35),
+            ),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
@@ -57,11 +73,13 @@ class _DestinationCardState extends State<DestinationCard> {
                     WisataImage(
                       sumber: widget.wisata.gambar,
                       namaWisata: widget.wisata.nama,
-                      fallbackAsset: widget.wisata.gambarFallbackLokal,
+                      fallbackAsset:
+                          widget.wisata.gambarFallbackLokal,
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
                     ),
+
                     Positioned(
                       bottom: 0,
                       left: 0,
@@ -80,11 +98,15 @@ class _DestinationCardState extends State<DestinationCard> {
                         ),
                       ),
                     ),
+
+                    // TOMBOL FAVORIT
                     Positioned(
                       top: 10,
                       right: 10,
                       child: Material(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: colors.surface.withValues(
+                          alpha: 0.95,
+                        ),
                         shape: const CircleBorder(),
                         elevation: 4,
                         child: InkWell(
@@ -100,12 +122,14 @@ class _DestinationCardState extends State<DestinationCard> {
                               size: 18,
                               color: widget.isFavorite
                                   ? Colors.red
-                                  : const Color(0xFF4B5675),
+                                  : colors.onSurfaceVariant,
                             ),
                           ),
                         ),
                       ),
                     ),
+
+                    // RATING
                     Positioned(
                       left: 10,
                       bottom: 10,
@@ -115,10 +139,13 @@ class _DestinationCardState extends State<DestinationCard> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colors.surface,
                           borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(color: Colors.black12, blurRadius: 4),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                            ),
                           ],
                         ),
                         child: Row(
@@ -132,10 +159,10 @@ class _DestinationCardState extends State<DestinationCard> {
                             const SizedBox(width: 4),
                             Text(
                               widget.wisata.rating,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF111A3A),
+                                color: colors.onSurface,
                               ),
                             ),
                           ],
@@ -145,13 +172,19 @@ class _DestinationCardState extends State<DestinationCard> {
                   ],
                 ),
               ),
+
+              // INFORMASI DESTINASI
               Expanded(
                 flex: 4,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                  padding: const EdgeInsets.fromLTRB(
+                    12,
+                    10,
+                    12,
+                    10,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,19 +193,21 @@ class _DestinationCardState extends State<DestinationCard> {
                             widget.wisata.nama,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFF111A3A),
+                              color: colors.onSurface,
                             ),
                           ),
+
                           const SizedBox(height: 6),
+
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.location_on,
                                 size: 14,
-                                color: Colors.grey,
+                                color: colors.onSurfaceVariant,
                               ),
                               const SizedBox(width: 4),
                               Expanded(
@@ -181,7 +216,7 @@ class _DestinationCardState extends State<DestinationCard> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: Colors.grey[600],
+                                    color: colors.onSurfaceVariant,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -193,19 +228,22 @@ class _DestinationCardState extends State<DestinationCard> {
 
                       const Spacer(),
 
+                      // LABEL KATEGORI
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                          color: colors.primary.withValues(
+                            alpha: 0.12,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           widget.wisata.kategori,
-                          style: const TextStyle(
-                            color: Color(0xFF2563EB),
+                          style: TextStyle(
+                            color: colors.primary,
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                           ),
