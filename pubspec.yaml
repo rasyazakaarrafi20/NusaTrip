@@ -41,6 +41,7 @@ dependencies:
   image_picker: ^1.2.4
   shared_preferences: ^2.5.6
   fluttermoji: ^1.0.2
+  inspireui: ^2.4.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
