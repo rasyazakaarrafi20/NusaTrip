@@ -39,12 +39,7 @@ class FavoritePageState extends State<FavoritePage> {
         ),
         actions: widget.dariNavbar
             ? [
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 45,
-                    minHeight: 45,
-                  ),
+                TextButton.icon(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -53,9 +48,17 @@ class FavoritePageState extends State<FavoritePage> {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.person_outline),
+                  icon: const Icon(Icons.person_outline, color: Colors.white),
+                  label: const Text(
+                    'Profil',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 10),
               ]
             : null,
       ),

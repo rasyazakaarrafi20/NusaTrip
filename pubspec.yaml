@@ -40,6 +40,7 @@ dependencies:
   supabase_flutter: ^2.18.3
   image_picker: ^1.2.4
   shared_preferences: ^2.5.6
+  fluttermoji: ^1.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,9 +83,10 @@ flutter:
     - assets/images/gunungrinjani.jpg
     - assets/images/gunungrinjani2.jpg
     - assets/images/gunungrinjani3.jpg
-    - assets/images/foto_dea.jpg  # <--- BARIS BARU UNTUK FOTO DEA
+    - assets/images/foto_dea.jpg  
     - assets/images/foto_aghnia.jpeg
     - assets/images/foto_fauzan.jpg
+    - assets/images/foto_nila.jpeg
 
   fonts:
     - family: Nunito

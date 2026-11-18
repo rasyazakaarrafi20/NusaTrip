@@ -1,12 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:fluttermoji/fluttermoji.dart';
 
 class ProfileHeader extends StatelessWidget {
   final String nama;
   final String email;
   final Uint8List? fotoProfil;
   final String? fotoProfilUrl;
+  final bool gunakanFluttermoji;
 
   const ProfileHeader({
     super.key,
@@ -14,6 +16,7 @@ class ProfileHeader extends StatelessWidget {
     required this.email,
     this.fotoProfil,
     this.fotoProfilUrl,
+    this.gunakanFluttermoji = false,
   });
 
   @override
@@ -28,21 +31,17 @@ class ProfileHeader extends StatelessWidget {
 
     return Column(
       children: [
-        CircleAvatar(
-          radius: 55,
-          backgroundColor: const Color(0xFF2563EB),
-          backgroundImage: gambarProfil,
-          onBackgroundImageError: gambarProfil is NetworkImage
-              ? (_, _) {}
-              : null,
-          child: gambarProfil == null
-              ? const Icon(
-                  Icons.person,
-                  size: 60,
-                  color: Colors.white,
-                )
-              : null,
-        ),
+        gunakanFluttermoji
+            ? FluttermojiCircleAvatar(radius: 55)
+            : CircleAvatar(
+                radius: 55,
+                backgroundColor: const Color(0xFF2563EB),
+                backgroundImage: gambarProfil,
+                onBackgroundImageError: gambarProfil is NetworkImage ? (_, _) {} : null,
+                child: gambarProfil == null
+                    ? const Icon(Icons.person, size: 60, color: Colors.white)
+                    : null,
+              ),
 
         const SizedBox(height: 15),
 

@@ -37,6 +37,12 @@ class MyApp extends StatelessWidget {
       brightness: Brightness.light, // PAKSA TERANG
       primaryColor: primaryColor,
       scaffoldBackgroundColor: bgColorLight,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF2563EB),
+        foregroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+      ),
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
         primary: primaryColor,
