@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../services/commons_image_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class WisataImage extends StatefulWidget {
   final String sumber;
@@ -31,11 +33,13 @@ class _WisataImageState extends State<WisataImage> {
 
   bool get _isUrl {
     final uri = Uri.tryParse(widget.sumber);
-    return uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+    return uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https');
   }
 
   String get _kataKunci {
-    if (widget.namaWisata != null && widget.namaWisata!.trim().isNotEmpty) {
+    if (widget.namaWisata != null &&
+        widget.namaWisata!.trim().isNotEmpty) {
       return widget.namaWisata!.trim();
     }
 
@@ -46,7 +50,10 @@ class _WisataImageState extends State<WisataImage> {
         : widget.sumber;
 
     return Uri.decodeComponent(namaFile)
-        .replaceAll(RegExp(r'\.(jpg|jpeg|png|webp)$', caseSensitive: false), '')
+        .replaceAll(
+          RegExp(r'\.(jpg|jpeg|png|webp)$', caseSensitive: false),
+          '',
+        )
         .replaceAll(RegExp(r'[-_]'), ' ');
   }
 
@@ -88,6 +95,7 @@ class _WisataImageState extends State<WisataImage> {
 
   Widget _placeholder({bool useFallback = true}) {
     final asset = widget.fallbackAsset;
+
     if (useFallback && asset != null && asset.isNotEmpty) {
       return Image.asset(
         asset,
@@ -122,21 +130,18 @@ class _WisataImageState extends State<WisataImage> {
   }
 
   Widget _gambarInternet(String url) {
-    return Image.network(
-      url,
+    return CachedNetworkImage(
+      imageUrl: url,
       width: widget.width,
       height: widget.height,
       fit: widget.fit,
-      webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
-      errorBuilder: (context, error, stackTrace) {
-        return _placeholder();
-      },
+      placeholder: (context, url) => _placeholder(),
+      errorWidget: (context, url, error) => _placeholder(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Jika gambar utama kosong, langsung gunakan pencarian alternatif.
     if (widget.sumber.trim().isEmpty) {
       if (!_sudahMencari && !_sedangMencari) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -151,7 +156,7 @@ class _WisataImageState extends State<WisataImage> {
       return _placeholder();
     }
 
-    // Jika gambar utama adalah URL internet.
+    // Jika gambar utama merupakan URL internet.
     if (_isUrl) {
       if (_gambarAlternatif != null) {
         return _gambarInternet(_gambarAlternatif!);
@@ -161,13 +166,13 @@ class _WisataImageState extends State<WisataImage> {
         return _placeholder();
       }
 
-      return Image.network(
-        widget.sumber,
+      return CachedNetworkImage(
+        imageUrl: widget.sumber,
         width: widget.width,
         height: widget.height,
         fit: widget.fit,
-        webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
-        errorBuilder: (context, error, stackTrace) {
+        placeholder: (context, url) => _placeholder(),
+        errorWidget: (context, url, error) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) _cariGambarAlternatif();
           });
